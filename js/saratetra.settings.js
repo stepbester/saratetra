@@ -1,0 +1,24 @@
+// Sizes
+var SCREEN_HEIGHT = 600;
+var SCREEN_WIDTH = 800;
+var BLOCK_HEIGHT = 29;
+var BLOCK_WIDTH = 29;
+var WELL_COLUMNS = 10;
+var WELL_ROWS = 20;
+var WELL_HEIGHT = WELL_ROWS * BLOCK_HEIGHT;
+var WELL_WIDTH = WELL_COLUMNS * BLOCK_WIDTH;
+var BORDER_PADDING = 10;
+
+// Colours
+var COLOUR_TEXT = "#ffffff";
+var COLOUR_BORDER = "#ffffff";
+var COLOUR_BACK = "#000000";
+var COLOUR_CLEAR_ROW = "#ffffff";
+
+// Timing
+var SEC_FRAC = 20;
+var FLASH_TIME = SEC_FRAC / 2;
+var MOVE_TIME = SEC_FRAC / 20;
+var FALL_TIME = SEC_FRAC;
+var FALL_SPEED_PER_LEVEL = 1;
+var ROW_CLEAR_TIME = SEC_FRAC / 10;
