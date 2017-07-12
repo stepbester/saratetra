@@ -89,8 +89,8 @@ Well.prototype.draw = function(context) {
 		context.fillRect(this.x, this.y, WELL_WIDTH, WELL_HEIGHT);
 		
 		// Debris blocks
-		for (x = 0; x < 10; x++) {
-			for (y = 0; y < 20; y++) {
+		for (x = 0; x < WELL_COLUMNS; x++) {
+			for (y = 0; y < WELL_ROWS; y++) {
 				var block = this.debris[x][y];
 				if (block) {
 					drawBlock(context, this.x + x * BLOCK_WIDTH, this.y + y * BLOCK_HEIGHT, block.blockColour);
