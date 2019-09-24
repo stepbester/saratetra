@@ -1,26 +1,23 @@
 /**
  * Saratetra stats class.
  */
-function Stats() {
-	this.resetTotals();
-}
-
-Stats.prototype.resetTotals = function() {
-	this.totals = {
-		i: 0,
-		o: 0,
-		t: 0,
-		j: 0,
-		l: 0,
-		s: 0,
-		z: 0
+class Stats {
+	constructor() {
+		this.resetTotals();
 	}
-}
-
-Stats.prototype.clear = function() {
-	this.resetTotals();
-}
-
-Stats.prototype.draw = function(context) {
-	
+	resetTotals() {
+		this.totals = {
+			i: 0,
+			o: 0,
+			t: 0,
+			j: 0,
+			l: 0,
+			s: 0,
+			z: 0
+		};
+	}
+	clear() {
+		this.resetTotals();
+	}
+	draw(context) {}
 }

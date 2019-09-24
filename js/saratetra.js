@@ -31,9 +31,9 @@ function process() {
 // When the document is ready
 document.addEventListener("DOMContentLoaded", function (event) {
 	init();
-	
+
 	document.addEventListener("keydown", onKeyDown);
 	document.addEventListener("keyup", onKeyUp);
-	
+
 	setInterval(process, 1000 / SEC_FRAC);
 });
