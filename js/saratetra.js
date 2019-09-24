@@ -29,11 +29,11 @@ function process() {
 }
 
 // When the document is ready
-$(function() {
+document.addEventListener("DOMContentLoaded", function (event) {
 	init();
 	
-	$(this).on("keydown", onKeyDown);
-	$(this).on("keyup", onKeyUp)
+	document.addEventListener("keydown", onKeyDown);
+	document.addEventListener("keyup", onKeyUp);
 	
 	setInterval(process, 1000 / SEC_FRAC);
 });
