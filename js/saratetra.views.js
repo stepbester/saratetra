@@ -14,7 +14,7 @@ class View {
 	tick() {
 		this.time++;
 	}
-	draw(targetCanvas) {
+	draw(renderer) {
 		// ...
 	}
 	close() {
@@ -57,17 +57,15 @@ class GameplayView extends View {
 		this.well.insertPiece(this.generator.pop());
 		this.nextBox.tetromino = this.generator.peek();
 	}
-	draw(targetCanvas) {
-		var context = targetCanvas.getContext("2d");
-
+	draw(renderer) {
 		// Draw background
-		context.drawImage(this.background, 0, 0);
+		renderer.drawBackground(this.background);
 
 		// Draw components
-		this.levelBox.draw(context);
-		this.well.draw(context);
-		this.nextBox.draw(context);
-		this.stats.draw(context);
+		this.levelBox.draw(renderer);
+		this.well.draw(renderer);
+		this.nextBox.draw(renderer);
+		this.stats.draw(renderer);
 	}
 	getLevelFallTime() {
 		return FALL_TIME - (this.level * FALL_SPEED_PER_LEVEL);
@@ -109,12 +107,14 @@ class GameplayView extends View {
 			case WellState.PIECE_STUCK:
 				// After wait, freeze the stuck piece
 				this.well.freezePiece();
+
 				// Check for rows
 				this.well.eliminateRows();
 				var clearedRows = this.well.getClearRowCount();
 				if (clearedRows > 0) {
 					// Clearing rows introduce a pause for the player to see what is happening
 					this.waitTime = ROW_CLEAR_TIME;
+
 					// Update score
 					// ...
 				}
@@ -123,13 +123,16 @@ class GameplayView extends View {
 				if (this.well.isLandingClear(this.generator.peek())) {
 					// Insert a new piece
 					this.well.insertPiece(this.generator.pop());
+
 					// Update the next piece
 					this.nextBox.tetromino = this.generator.peek();
+
 					// Reset step time
 					this.waitTime = this.getLevelFallTime();
 				} else {
 					// Blocked
 					this.well.endGame();
+
 					// Give game over animation time to finish
 					this.waitTime = 10;
 				}
@@ -138,17 +141,20 @@ class GameplayView extends View {
 				if (this.waitTime > 0) {
 					// Lessen wait time
 					this.waitTime--;
+
 					// Progress game over animation
 					this.well.animateEnding(10 - this.waitTime);
 				}
 				break;
 			case WellState.GAME_OVER:
 				var gameOver = new GameOverView(engine);
+
 				// When game over view is closed, return to title
 				var gameplay = this;
 				gameOver.onClose = function () {
 					gameplay.close();
 				};
+
 				// Display game over message
 				this.engine.openView(gameOver);
 				break;
@@ -162,7 +168,7 @@ class GameplayView extends View {
 				}
 				break;
 			case WellState.ROWS_CLEARED:
-				//this.well.
+				// TODO: Nothing?
 				break;
 		}
 	}
@@ -180,35 +186,15 @@ class GameOverView extends View {
 	}
 	tick() {
 		View.prototype.tick.call(this);
+		
 		// Process actions
 		if (this.controller.executeAction(UserFunctions.SELECT)) {
 			// Close this view
 			this.close();
 		}
 	}
-	draw(targetCanvas) {
-		var context = targetCanvas.getContext("2d");
-		// Box borders
-		var boxHeight = 90;
-		var boxWidth = 240;
-		var boxLeft = (SCREEN_WIDTH - boxWidth) / 2;
-		var boxTop = (SCREEN_HEIGHT - boxHeight) / 2;
-
-		// Outer border
-		context.strokeStyle = COLOUR_BORDER;
-		context.lineWidth = 2;
-		context.strokeRect(boxLeft, boxTop, boxWidth, boxHeight);
-
-		// Back colour
-		context.fillStyle = COLOUR_BACK;
-		context.fillRect(boxLeft, boxTop, boxWidth, boxHeight);
-
-		// Message
-		context.font = "bold 26px Arial";
-		context.fillStyle = COLOUR_TEXT;
-		context.textAlign = "center";
-		context.textBaseline = "middle";
-		context.fillText("GAME OVER", boxLeft + boxWidth / 2, boxTop + boxHeight / 2);
+	draw(renderer) {
+		renderer.drawGameOver();
 	}
 }
 
@@ -355,56 +341,8 @@ class TitleView extends View {
 			this.engine.openView(new GameplayView());
 		}
 	}
-	draw(targetCanvas) {
-		var context = targetCanvas.getContext("2d");
-
-		// Frame borders
-		var frameHeight = 15 * BLOCK_HEIGHT;
-		var frameWidth = 25 * BLOCK_WIDTH;
-		var frameLeft = (SCREEN_WIDTH - frameWidth) / 2;
-		var frameTop = (SCREEN_HEIGHT - frameHeight) / 2;
-
-		// Draw background
-		context.drawImage(this.background, 0, 0);
-
-		// Outer border
-		context.strokeStyle = COLOUR_BORDER;
-		context.lineWidth = 2;
-		context.strokeRect(frameLeft, frameTop, frameWidth, frameHeight);
-		context.save();
-
-		// {
-		// Clip inside of border
-		context.beginPath();
-		context.rect(frameLeft + 1, frameTop + 1, frameWidth - 2, frameHeight - 2);
-		context.clip();
-
-		// Back colour
-		context.fillStyle = COLOUR_BACK;
-		context.fillRect(frameLeft, frameTop, frameWidth, frameHeight);
-
-		// Logo
-		var logoLeft = (SCREEN_WIDTH - 23 * BLOCK_WIDTH) / 2;
-		var logoTop = (SCREEN_HEIGHT - 13 * BLOCK_HEIGHT) / 2;
-		for (var x = 0; x < this.logo.length; x++) {
-			for (var y = 0; y < this.logo[x].length; y++) {
-				if (this.logo[x][y]) {
-					var blockX = logoLeft + x * BLOCK_WIDTH;
-					var blockY = logoTop + y * BLOCK_HEIGHT;
-					drawBlock(context, blockX, blockY, this.logo[x][y]);
-				}
-			}
-		}
-
-		// Press any key
-		if (this.noticeVisible) {
-			context.fillStyle = COLOUR_TEXT;
-			context.font = "bold 32px Arial";
-			context.textAlign = "center";
-			context.textBaseline = "middle";
-			context.fillText("PRESS THE 'X' KEY", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-		}
-		// }
-		context.restore();
+	draw(renderer) {
+		renderer.drawBackground(this.background);
+		renderer.drawTitle(this.logo, this.noticeVisible);
 	}
 }

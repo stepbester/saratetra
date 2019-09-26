@@ -19,5 +19,7 @@ class Stats {
 	clear() {
 		this.resetTotals();
 	}
-	draw(context) {}
+	draw(renderer) {
+		renderer.drawStats(this.totals);
+	}
 }

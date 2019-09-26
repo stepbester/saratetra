@@ -1,22 +1,4 @@
 /**
- * Generic function for drawing a block.
- * TODO: Move this function to a more sensible place.
- */
-function drawBlock(context, x, y, blockColour) {
-	// Back
-	context.fillStyle = blockColour.back;
-	context.fillRect(x, y, BLOCK_WIDTH, BLOCK_WIDTH);
-
-	// Front
-	context.fillStyle = blockColour.front;
-	context.fillRect(x + 1, y + 1, BLOCK_WIDTH - 2, BLOCK_HEIGHT - 2);
-
-	// Shine
-	context.fillStyle = blockColour.shine;
-	context.fillRect(x + 0.6 * BLOCK_WIDTH, y + 0.1 * BLOCK_HEIGHT, 0.25 * BLOCK_WIDTH, 0.25 * BLOCK_HEIGHT);
-}
-
-/**
  * Tetromino block colour scheme class.
  */
 class BlockColour {
@@ -35,8 +17,7 @@ var BLOCK_BLUE = new BlockColour("#1e90ff", "#0b60cc", "#7ff6ff");
 var BLOCK_ORANGE = new BlockColour("#ff8800", "#cc5500", "#ffee66");
 var BLOCK_YELLOW = new BlockColour("#ffd700", "#cca400", "#fffd66");
 var BLOCK_PURPLE = new BlockColour("#da70d6", "#a740a3", "#ffd6fc");
-var BLOCK_GREEN = new BlockColour("#00ff44", "#00cc11", "#99ffaa"); // breaking the rules on the shine colour 
-// because otherwise it's too blue
+var BLOCK_GREEN = new BlockColour("#00ff44", "#00cc11", "#99ffaa"); // breaking the rules on the shine colour because otherwise it's too blue
 var BLOCK_CYAN = new BlockColour("#b0e0e6", "#7dadb3", "#f6f6fc");
 
 /**
@@ -53,10 +34,10 @@ class Tetromino {
 	getBlocks() {
 		return [];
 	}
-	draw(context, x, y) {
+	draw(renderer, x, y) {
 		var blocks = this.getBlocks();
 		for (var i = 0; i < blocks.length; i++) {
-			drawBlock(context, x + ((blocks[i].colOffset - 1) * BLOCK_WIDTH), y + ((blocks[i].rowOffset - 1) * BLOCK_HEIGHT), this.colour);
+			renderer.drawBlock(x + ((blocks[i].colOffset - 1) * BLOCK_WIDTH), y + ((blocks[i].rowOffset - 1) * BLOCK_HEIGHT), this.colour);
 		}
 	}
 	rotate() {

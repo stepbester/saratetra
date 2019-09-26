@@ -2,9 +2,9 @@
  * Saratetris game class.
  */
 class TetraEngine {
-	constructor(canvas) {
+	constructor(renderer) {
 		this.views = [];
-		this.canvas = canvas;
+		this.renderer = renderer;
 	}
 	openView(view) {
 		view.engine = this;
@@ -28,10 +28,8 @@ class TetraEngine {
 	}
 	draw() {
 		// Clear canvas
-		var context = this.canvas.getContext("2d");
-		context.fillStyle = "#000000";
-		context.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
+		this.renderer.clearScreen();
+		
 		// Find the first view that blocks draw
 		var start = 0;
 		for (var i = this.views.length - 1; i >= 0; i--) {
@@ -40,9 +38,10 @@ class TetraEngine {
 				break;
 			}
 		}
+
 		// Draw the views from the bottom up
 		for (var i = start; i < this.views.length; i++) {
-			this.views[i].draw(this.canvas);
+			this.views[i].draw(this.renderer);
 		}
 	}
 	keyDown(event) {

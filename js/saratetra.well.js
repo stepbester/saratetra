@@ -64,72 +64,10 @@ class Well {
 		}
 	}
 	// draw(): Draw the well and its contents.
-	draw(context) {
-		// Border
-		context.strokeStyle = COLOUR_BORDER;
-		context.lineWidth = 2;
-		context.strokeRect(this.x, this.y, WELL_WIDTH, WELL_HEIGHT);
-		context.save();
-
-		// {
-		// Clip inside of border
-		context.beginPath();
-		context.rect(this.x + 1, this.y + 1, WELL_WIDTH - 2, WELL_HEIGHT - 2);
-		context.clip();
-
-		// Back colour
-		context.fillStyle = COLOUR_BACK;
-		context.fillRect(this.x, this.y, WELL_WIDTH, WELL_HEIGHT);
-
-		// Debris blocks
-		for (var x = 0; x < WELL_COLUMNS; x++) {
-			for (var y = 0; y < WELL_ROWS; y++) {
-				var block = this.debris[x][y];
-				if (block) {
-					drawBlock(context, this.x + x * BLOCK_WIDTH, this.y + y * BLOCK_HEIGHT, block.blockColour);
-				}
-			}
-		}
-
-		// Falling piece
-		if (this.fallingPiece) {
-			this.fallingPiece.draw(context, this.x + this.fallingCol * BLOCK_WIDTH, this.y + this.fallingRow * BLOCK_HEIGHT);
-		}
-
-		// Cleared rows
-		for (var row = 0; row < this.rowsToClear.length; row++) {
-			// Get row index of cleared row
-			var clearRow = this.rowsToClear[row];
-			context.fillStyle = COLOUR_CLEAR_ROW;
-			context.fillRect(this.x, this.y + clearRow * BLOCK_HEIGHT, WELL_WIDTH, BLOCK_HEIGHT);
-		}
-
-		// Game over animation
-		if (this.state == WellState.GAME_ENDING || this.state == WellState.GAME_OVER) {
-			for (var goRow = 0; goRow < this.gameOverStep; goRow++) {
-				var rowColour = gameOverColours[this.gameOverStep];
-				for (var goCol = 0; goCol < WELL_COLUMNS; goCol++) {
-					// From the top
-					drawBlock(context, this.x + goCol * BLOCK_WIDTH, this.y + goRow * BLOCK_HEIGHT, gameOverColours[goRow]);
-
-					// From the bottom
-					drawBlock(context, this.x + goCol * BLOCK_WIDTH, this.y + (WELL_ROWS - goRow - 1) * BLOCK_HEIGHT, gameOverColours[goRow]);
-				}
-			}
-		}
-		// }
-
-		context.restore();
-		// Temporary numbering
-		/*context.fillStyle = "#ffff00";
-		context.font = "10px Arial";
-		context.textAlign = "center";
-		context.textBaseline = "bottom";
-		for (var j = 0; j < WELL_COLUMNS; j++) {
-		    for (var k = 0; k < WELL_ROWS; k++) {
-		        context.fillText(j + ", " + k, this.x + j * BLOCK_WIDTH + (BLOCK_WIDTH / 2), this.y + k * BLOCK_HEIGHT + (BLOCK_HEIGHT / 2));
-		    }
-		}*/
+	draw(renderer) {
+		renderer.drawWell(this.x, this.y, this.debris, 
+			this.fallingCol, this.fallingRow, this.fallingPiece, 
+			this.rowsToClear, this.state, this.gameOverStep);
 	}
 	// applyGravity(): Lower falling piece.
 	applyGravity() {
