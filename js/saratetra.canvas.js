@@ -6,6 +6,12 @@ class CanvasRenderer {
         this.context = canvas.getContext("2d");
         this.width = screenWidth;
         this.height = screenHeight;
+
+        // Colours
+        this.textColour = "#ffffff";
+        this.borderColour = "#ffffff";
+        this.backColour = "#000000";
+        this.rowClearColour = "#ffffff";
     }
 
     clearScreen() {
@@ -24,7 +30,7 @@ class CanvasRenderer {
 		var boxTop = BORDER_PADDING;
 
 		// Border
-		this.context.strokeStyle = COLOUR_BORDER;
+		this.context.strokeStyle = this.borderColour;
 		this.context.lineWidth = 2;
 		this.context.strokeRect(boxLeft, boxTop, boxWidth, boxHeight);
 		this.context.save();
@@ -36,12 +42,12 @@ class CanvasRenderer {
 		this.context.clip();
 
 		// Back colour
-		this.context.fillStyle = COLOUR_BACK;
+		this.context.fillStyle = this.backColour;
 		this.context.fillRect(boxLeft, boxTop, boxWidth, boxHeight);
 
 		// Level
 		this.context.font = "bold 26px Arial";
-		this.context.fillStyle = COLOUR_TEXT;
+		this.context.fillStyle = this.textColour;
 		this.context.textAlign = "center";
 		this.context.textBaseline = "top";
 		this.context.fillText("LEVEL", boxLeft + boxWidth / 2, boxTop + BORDER_PADDING);
@@ -69,7 +75,7 @@ class CanvasRenderer {
 
     drawWell(x, y, debris, fallingCol, fallingRow, fallingPiece, rowsToClear, state, gameOverStep) {
         // Border
-		this.context.strokeStyle = COLOUR_BORDER;
+		this.context.strokeStyle = this.borderColour;
 		this.context.lineWidth = 2;
 		this.context.strokeRect(x, y, WELL_WIDTH, WELL_HEIGHT);
 		this.context.save();
@@ -81,7 +87,7 @@ class CanvasRenderer {
 		this.context.clip();
 
 		// Back colour
-		this.context.fillStyle = COLOUR_BACK;
+		this.context.fillStyle = this.backColour;
 		this.context.fillRect(x, y, WELL_WIDTH, WELL_HEIGHT);
 
 		// Debris blocks
@@ -103,7 +109,7 @@ class CanvasRenderer {
 		for (var row = 0; row < rowsToClear.length; row++) {
 			// Get row index of cleared row
 			var clearRow = rowsToClear[row];
-			this.context.fillStyle = COLOUR_CLEAR_ROW;
+			this.context.fillStyle = this.rowClearColour;
 			this.context.fillRect(x, y + clearRow * BLOCK_HEIGHT, WELL_WIDTH, BLOCK_HEIGHT);
 		}
 
@@ -143,7 +149,7 @@ class CanvasRenderer {
 		var boxTop = BORDER_PADDING;
 
 		// Border
-		this.context.strokeStyle = COLOUR_BORDER;
+		this.context.strokeStyle = this.borderColour;
 		this.context.lineWidth = 2;
 		this.context.strokeRect(boxLeft, boxTop, boxWidth, boxHeight);
 		this.context.save();
@@ -155,12 +161,12 @@ class CanvasRenderer {
 		this.context.clip();
 
 		// Back colour
-		this.context.fillStyle = COLOUR_BACK;
+		this.context.fillStyle = this.backColour;
 		this.context.fillRect(boxLeft, boxTop, boxWidth, boxHeight);
 
 		// Label
 		this.context.font = "bold 26px Arial";
-		this.context.fillStyle = COLOUR_TEXT;
+		this.context.fillStyle = this.textColour;
 		this.context.textAlign = "center";
 		this.context.textBaseline = "top";
 		this.context.fillText("NEXT", boxLeft + boxWidth / 2, boxTop + BORDER_PADDING);
@@ -186,17 +192,17 @@ class CanvasRenderer {
 		var boxTop = (SCREEN_HEIGHT - boxHeight) / 2;
 
 		// Outer border
-		this.context.strokeStyle = COLOUR_BORDER;
+		this.context.strokeStyle = this.borderColour;
 		this.context.lineWidth = 2;
 		this.context.strokeRect(boxLeft, boxTop, boxWidth, boxHeight);
 
 		// Back colour
-		this.context.fillStyle = COLOUR_BACK;
+		this.context.fillStyle = this.backColour;
 		this.context.fillRect(boxLeft, boxTop, boxWidth, boxHeight);
 
 		// Message
 		this.context.font = "bold 26px Arial";
-		this.context.fillStyle = COLOUR_TEXT;
+		this.context.fillStyle = this.textColour;
 		this.context.textAlign = "center";
 		this.context.textBaseline = "middle";
 		this.context.fillText("GAME OVER", boxLeft + boxWidth / 2, boxTop + boxHeight / 2);
@@ -210,7 +216,7 @@ class CanvasRenderer {
 		var frameTop = (SCREEN_HEIGHT - frameHeight) / 2;
 
 		// Outer border
-		this.context.strokeStyle = COLOUR_BORDER;
+		this.context.strokeStyle = this.borderColour;
 		this.context.lineWidth = 2;
 		this.context.strokeRect(frameLeft, frameTop, frameWidth, frameHeight);
 		this.context.save();
@@ -222,7 +228,7 @@ class CanvasRenderer {
 		this.context.clip();
 
 		// Back colour
-		this.context.fillStyle = COLOUR_BACK;
+		this.context.fillStyle = this.backColour;
 		this.context.fillRect(frameLeft, frameTop, frameWidth, frameHeight);
 
 		// Logo
@@ -240,7 +246,7 @@ class CanvasRenderer {
 
 		// Press any key
 		if (noticeVisible) {
-			this.context.fillStyle = COLOUR_TEXT;
+			this.context.fillStyle = this.textColour;
 			this.context.font = "bold 32px Arial";
 			this.context.textAlign = "center";
 			this.context.textBaseline = "middle";

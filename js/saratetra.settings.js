@@ -9,12 +9,6 @@ var WELL_HEIGHT = WELL_ROWS * BLOCK_HEIGHT;
 var WELL_WIDTH = WELL_COLUMNS * BLOCK_WIDTH;
 var BORDER_PADDING = 10;
 
-// Colours
-var COLOUR_TEXT = "#ffffff";
-var COLOUR_BORDER = "#ffffff";
-var COLOUR_BACK = "#000000";
-var COLOUR_CLEAR_ROW = "#ffffff";
-
 // Timing
 var SEC_FRAC = 20;
 var FLASH_TIME = SEC_FRAC / 2;
