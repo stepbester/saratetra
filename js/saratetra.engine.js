@@ -2,12 +2,19 @@
  * Saratetris game class.
  */
 class TetraEngine {
-	constructor(renderer) {
-		this.views = [];
+	constructor(renderer, refreshPerSecond, flashRate, moveRate, fallRate, clearRate) {
 		this.renderer = renderer;
+		this.rps = refreshPerSecond;
+		this.flashRate = flashRate;
+		this.moveRate = moveRate;
+		this.fallRate = fallRate;
+		this.clearRate = clearRate;
+		this.views = [];
+	}
+	openStartingView() {
+		this.openView(new TitleView(engine, this.flashRate));
 	}
 	openView(view) {
-		view.engine = this;
 		this.views.push(view);
 	}
 	closeView(targetView) {

@@ -31,8 +31,9 @@ class View {
 class GameplayView extends View {
 	constructor(engine) {
 		super(engine);
-		this.controller = new GameplayController();
+		this.controller = new GameplayController(engine);
 		this.blockInput = true;
+		this.fallSpeedPerLevel = 1;
 		this.level = 1;
 		this.score = 0;
 		this.lines = 0;
@@ -68,7 +69,7 @@ class GameplayView extends View {
 		this.stats.draw(renderer);
 	}
 	getLevelFallTime() {
-		return FALL_TIME - (this.level * FALL_SPEED_PER_LEVEL);
+		return this.engine.fallRate - (this.level * this.fallSpeedPerLevel);
 	}
 	tick() {
 		View.prototype.tick.call(this);
@@ -113,10 +114,9 @@ class GameplayView extends View {
 				var clearedRows = this.well.getClearRowCount();
 				if (clearedRows > 0) {
 					// Clearing rows introduce a pause for the player to see what is happening
-					this.waitTime = ROW_CLEAR_TIME;
+					this.waitTime = this.engine.clearRate;
 
-					// Update score
-					// ...
+					// TODO: Update score
 				}
 				break;
 			case WellState.PENDING_NEXT_PIECE:
@@ -202,9 +202,10 @@ class GameOverView extends View {
  * Saratetra title view class.
  */
 class TitleView extends View {
-	constructor(engine) {
+	constructor(engine, flashRate) {
 		super(engine);
-		this.controller = new TitleController();
+		this.flashRate = flashRate;
+		this.controller = new TitleController(engine);
 		this.noticeVisible = false;
 		this.background = new Image();
 		this.background.src = "img/stars.jpg";
@@ -332,13 +333,13 @@ class TitleView extends View {
 		View.prototype.tick.call(this);
 
 		// Flash notice
-		if (this.time % FLASH_TIME == 0) {
+		if (this.time % this.flashRate == 0) {
 			this.noticeVisible = !this.noticeVisible;
 		}
 		// Process actions
 		if (this.controller.executeAction(UserFunctions.SELECT)) {
 			// Go to character creation view
-			this.engine.openView(new GameplayView());
+			this.engine.openView(new GameplayView(this.engine));
 		}
 	}
 	draw(renderer) {

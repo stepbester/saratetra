@@ -1,7 +1,0 @@
-// Timing
-var SEC_FRAC = 20;
-var FLASH_TIME = SEC_FRAC / 2;
-var MOVE_TIME = SEC_FRAC / 20;
-var FALL_TIME = SEC_FRAC;
-var FALL_SPEED_PER_LEVEL = 1;
-var ROW_CLEAR_TIME = SEC_FRAC / 10;
