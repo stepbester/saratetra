@@ -1,6 +1,4 @@
 // Sizes
-var SCREEN_HEIGHT = 600;
-var SCREEN_WIDTH = 800;
 var BLOCK_HEIGHT = 29;
 var BLOCK_WIDTH = 29;
 var BORDER_PADDING = 10;

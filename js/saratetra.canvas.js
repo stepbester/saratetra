@@ -151,7 +151,7 @@ class CanvasRenderer {
     drawNextBox(tetromino) {
         var boxHeight = 190;
 		var boxWidth = 160;
-		var boxLeft = SCREEN_WIDTH - BORDER_PADDING - boxWidth - 40;
+		var boxLeft = this.width - BORDER_PADDING - boxWidth - 40;
 		var boxTop = BORDER_PADDING;
 
 		// Border
@@ -194,8 +194,8 @@ class CanvasRenderer {
         // Box borders
 		var boxHeight = 90;
 		var boxWidth = 240;
-		var boxLeft = (SCREEN_WIDTH - boxWidth) / 2;
-		var boxTop = (SCREEN_HEIGHT - boxHeight) / 2;
+		var boxLeft = (this.width - boxWidth) / 2;
+		var boxTop = (this.height - boxHeight) / 2;
 
 		// Outer border
 		this.context.strokeStyle = this.borderColour;
@@ -218,8 +218,8 @@ class CanvasRenderer {
         // Frame borders
 		var frameHeight = 15 * BLOCK_HEIGHT;
 		var frameWidth = 25 * BLOCK_WIDTH;
-		var frameLeft = (SCREEN_WIDTH - frameWidth) / 2;
-		var frameTop = (SCREEN_HEIGHT - frameHeight) / 2;
+		var frameLeft = (this.width - frameWidth) / 2;
+		var frameTop = (this.height - frameHeight) / 2;
 
 		// Outer border
 		this.context.strokeStyle = this.borderColour;
@@ -238,8 +238,8 @@ class CanvasRenderer {
 		this.context.fillRect(frameLeft, frameTop, frameWidth, frameHeight);
 
 		// Logo
-		var logoLeft = (SCREEN_WIDTH - 23 * BLOCK_WIDTH) / 2;
-		var logoTop = (SCREEN_HEIGHT - 13 * BLOCK_HEIGHT) / 2;
+		var logoLeft = (this.width - 23 * BLOCK_WIDTH) / 2;
+		var logoTop = (this.height - 13 * BLOCK_HEIGHT) / 2;
 		for (var x = 0; x < logo.length; x++) {
 			for (var y = 0; y < logo[x].length; y++) {
 				if (logo[x][y]) {
@@ -256,7 +256,7 @@ class CanvasRenderer {
 			this.context.font = "bold 32px Arial";
 			this.context.textAlign = "center";
 			this.context.textBaseline = "middle";
-			this.context.fillText("PRESS THE 'X' KEY", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+			this.context.fillText("PRESS THE 'X' KEY", this.width / 2, this.height / 2);
 		}
 		// }
 		
