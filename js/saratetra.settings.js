@@ -1,8 +1,3 @@
-// Sizes
-var BLOCK_HEIGHT = 29;
-var BLOCK_WIDTH = 29;
-var BORDER_PADDING = 10;
-
 // Timing
 var SEC_FRAC = 20;
 var FLASH_TIME = SEC_FRAC / 2;

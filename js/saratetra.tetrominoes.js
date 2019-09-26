@@ -36,9 +36,7 @@ class Tetromino {
 	}
 	draw(renderer, x, y) {
 		var blocks = this.getBlocks();
-		for (var i = 0; i < blocks.length; i++) {
-			renderer.drawBlock(x + ((blocks[i].colOffset - 1) * BLOCK_WIDTH), y + ((blocks[i].rowOffset - 1) * BLOCK_HEIGHT), this.colour);
-		}
+		renderer.drawBlocks(x, y, blocks, this.colour);
 	}
 	rotate() {
 		if (this.rotatable) {

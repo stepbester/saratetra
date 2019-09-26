@@ -2,32 +2,37 @@
  * Saratetra canvas renderer.
  */
 class CanvasRenderer {
-    constructor(canvas, screenWidth, screenHeight) {
-        this.context = canvas.getContext("2d");
-        this.width = screenWidth;
-        this.height = screenHeight;
+	constructor(canvas, screenWidth, screenHeight) {
+		this.context = canvas.getContext("2d");
+		this.width = screenWidth;
+		this.height = screenHeight;
 
-        // Colours
-        this.textColour = "#ffffff";
-        this.borderColour = "#ffffff";
-        this.backColour = "#000000";
-        this.rowClearColour = "#ffffff";
-    }
+		// Derived sizes
+		this.blockWidth = 29 / 800 * screenWidth;
+		this.blockHeight = 29 / 600 * screenHeight;
+		this.borderPadding = 10 / 29 * this.blockWidth;
 
-    clearScreen() {
-        this.context.fillStyle = "#000000";
+		// Colours
+		this.textColour = "#ffffff";
+		this.borderColour = "#ffffff";
+		this.backColour = "#000000";
+		this.rowClearColour = "#ffffff";
+	}
+
+	clearScreen() {
+		this.context.fillStyle = "#000000";
 		this.context.fillRect(0, 0, this.width, this.height);
-    }
+	}
 
-    drawBackground(image) {
-        this.context.drawImage(image, 0, 0, this.width, this.height);
-    }
+	drawBackground(image) {
+		this.context.drawImage(image, 0, 0, this.width, this.height);
+	}
 
-    drawLevelBox(level) {
-        var boxHeight = 115;
+	drawLevelBox(level) {
+		var boxHeight = 115;
 		var boxWidth = 160;
-		var boxLeft = BORDER_PADDING + 40;
-		var boxTop = BORDER_PADDING;
+		var boxLeft = this.borderPadding + 40;
+		var boxTop = this.borderPadding;
 
 		// Border
 		this.context.strokeStyle = this.borderColour;
@@ -50,37 +55,45 @@ class CanvasRenderer {
 		this.context.fillStyle = this.textColour;
 		this.context.textAlign = "center";
 		this.context.textBaseline = "top";
-		this.context.fillText("LEVEL", boxLeft + boxWidth / 2, boxTop + BORDER_PADDING);
+		this.context.fillText("LEVEL", boxLeft + boxWidth / 2, boxTop + this.borderPadding);
 		this.context.font = "bold 48px Arial";
 		this.context.textBaseline = "middle";
-		this.context.fillText(level, boxLeft + boxWidth / 2, boxTop + BORDER_PADDING + 65);
+		this.context.fillText(level, boxLeft + boxWidth / 2, boxTop + this.borderPadding + 65);
 		// }
 
 		this.context.restore();
-    }
+	}
 
-    drawBlock(x, y, blockColour) {
-        // Back
-        this.context.fillStyle = blockColour.back;
-        this.context.fillRect(x, y, BLOCK_WIDTH, BLOCK_WIDTH);
+	drawBlock(x, y, blockColour) {
+		// Back
+		this.context.fillStyle = blockColour.back;
+		this.context.fillRect(x, y, this.blockWidth, this.blockHeight);
 
-        // Front
-        this.context.fillStyle = blockColour.front;
-        this.context.fillRect(x + 1, y + 1, BLOCK_WIDTH - 2, BLOCK_HEIGHT - 2);
+		// Front
+		this.context.fillStyle = blockColour.front;
+		this.context.fillRect(x + 1, y + 1, this.blockWidth - 2, this.blockHeight - 2);
 
-        // Shine
-        this.context.fillStyle = blockColour.shine;
-        this.context.fillRect(x + 0.6 * BLOCK_WIDTH, y + 0.1 * BLOCK_HEIGHT, 0.25 * BLOCK_WIDTH, 0.25 * BLOCK_HEIGHT);
-    }
+		// Shine
+		this.context.fillStyle = blockColour.shine;
+		this.context.fillRect(x + 0.6 * this.blockWidth, y + 0.1 * this.blockHeight, 0.25 * this.blockWidth, 0.25 * this.blockHeight);
+	}
 
-    drawWell(rows, columns, debris, fallingCol, fallingRow, fallingPiece, rowsToClear, state, gameOverStep) {
-        // Well starting position
-        var wellHeight = rows * BLOCK_HEIGHT;
-        var wellWidth = columns * BLOCK_HEIGHT;
-        var x = this.width / 2 - wellWidth / 2;
+	drawBlocks(x, y, blocks, colour) {
+		for (var i = 0; i < blocks.length; i++) {
+			this.drawBlock(x + ((blocks[i].colOffset - 1) * this.blockWidth),
+				y + ((blocks[i].rowOffset - 1) * this.blockHeight),
+				colour);
+		}
+	}
+
+	drawWell(rows, columns, debris, fallingCol, fallingRow, fallingPiece, rowsToClear, state, gameOverStep) {
+		// Well starting position
+		var wellHeight = rows * this.blockHeight;
+		var wellWidth = columns * this.blockHeight;
+		var x = this.width / 2 - wellWidth / 2;
 		var y = this.height / 2 - wellHeight / 2;
 
-        // Border
+		// Border
 		this.context.strokeStyle = this.borderColour;
 		this.context.lineWidth = 2;
 		this.context.strokeRect(x, y, wellWidth, wellHeight);
@@ -101,14 +114,14 @@ class CanvasRenderer {
 			for (var dy = 0; dy < rows; dy++) {
 				var block = debris[dx][dy];
 				if (block) {
-					this.drawBlock(x + dx * BLOCK_WIDTH, y + dy * BLOCK_HEIGHT, block.blockColour);
+					this.drawBlock(x + dx * this.blockWidth, y + dy * this.blockHeight, block.blockColour);
 				}
 			}
 		}
 
 		// Falling piece
 		if (fallingPiece) {
-			fallingPiece.draw(this, x + fallingCol * BLOCK_WIDTH, y + fallingRow * BLOCK_HEIGHT);
+			fallingPiece.draw(this, x + fallingCol * this.blockWidth, y + fallingRow * this.blockHeight);
 		}
 
 		// Cleared rows
@@ -116,7 +129,7 @@ class CanvasRenderer {
 			// Get row index of cleared row
 			var clearRow = rowsToClear[row];
 			this.context.fillStyle = this.rowClearColour;
-			this.context.fillRect(x, y + clearRow * BLOCK_HEIGHT, wellWidth, BLOCK_HEIGHT);
+			this.context.fillRect(x, y + clearRow * this.blockHeight, wellWidth, this.blockHeight);
 		}
 
 		// Game over animation
@@ -125,17 +138,17 @@ class CanvasRenderer {
 				var rowColour = gameOverColours[gameOverStep];
 				for (var goCol = 0; goCol < columns; goCol++) {
 					// From the top
-					this.drawBlock(x + goCol * BLOCK_WIDTH, y + goRow * BLOCK_HEIGHT, gameOverColours[goRow]);
+					this.drawBlock(x + goCol * this.blockWidth, y + goRow * this.blockHeight, gameOverColours[goRow]);
 
 					// From the bottom
-					this.drawBlock(x + goCol * BLOCK_WIDTH, y + (rows - goRow - 1) * BLOCK_HEIGHT, gameOverColours[goRow]);
+					this.drawBlock(x + goCol * this.blockWidth, y + (rows - goRow - 1) * this.blockHeight, gameOverColours[goRow]);
 				}
 			}
 		}
 		// }
 
-        this.context.restore();
-        
+		this.context.restore();
+
 		// Temporary numbering
 		/*this.context.fillStyle = "#ffff00";
 		this.context.font = "10px Arial";
@@ -143,16 +156,16 @@ class CanvasRenderer {
 		this.context.textBaseline = "bottom";
 		for (var j = 0; j < WELL_COLUMNS; j++) {
 		    for (var k = 0; k < WELL_ROWS; k++) {
-		        this.context.fillText(j + ", " + k, x + j * BLOCK_WIDTH + (BLOCK_WIDTH / 2), y + k * BLOCK_HEIGHT + (BLOCK_HEIGHT / 2));
+		        this.context.fillText(j + ", " + k, x + j * this.blockWidth + (this.blockWidth / 2), y + k * this.blockHeight + (this.blockHeight / 2));
 		    }
 		}*/
-    }
+	}
 
-    drawNextBox(tetromino) {
-        var boxHeight = 190;
+	drawNextBox(tetromino) {
+		var boxHeight = 190;
 		var boxWidth = 160;
-		var boxLeft = this.width - BORDER_PADDING - boxWidth - 40;
-		var boxTop = BORDER_PADDING;
+		var boxLeft = this.width - this.borderPadding - boxWidth - 40;
+		var boxTop = this.borderPadding;
 
 		// Border
 		this.context.strokeStyle = this.borderColour;
@@ -175,23 +188,23 @@ class CanvasRenderer {
 		this.context.fillStyle = this.textColour;
 		this.context.textAlign = "center";
 		this.context.textBaseline = "top";
-		this.context.fillText("NEXT", boxLeft + boxWidth / 2, boxTop + BORDER_PADDING);
+		this.context.fillText("NEXT", boxLeft + boxWidth / 2, boxTop + this.borderPadding);
 
 		// Piece
 		if (tetromino) {
-			tetromino.draw(this, boxLeft + (boxWidth / 2) + ((4 - tetromino.columns) / 2) * BLOCK_WIDTH, boxTop + 20 + (boxHeight / 2) + ((4 - tetromino.rows) / 2) * BLOCK_HEIGHT);
+			tetromino.draw(this, boxLeft + (boxWidth / 2) + ((4 - tetromino.columns) / 2) * this.blockWidth, boxTop + 20 + (boxHeight / 2) + ((4 - tetromino.rows) / 2) * this.blockHeight);
 		}
 		// }
 
 		this.context.restore();
-    }
+	}
 
-    drawStats(totals) {
-        // TODO: Draw stats
-    }
+	drawStats(totals) {
+		// TODO: Draw stats
+	}
 
-    drawGameOver() {
-        // Box borders
+	drawGameOver() {
+		// Box borders
 		var boxHeight = 90;
 		var boxWidth = 240;
 		var boxLeft = (this.width - boxWidth) / 2;
@@ -212,12 +225,12 @@ class CanvasRenderer {
 		this.context.textAlign = "center";
 		this.context.textBaseline = "middle";
 		this.context.fillText("GAME OVER", boxLeft + boxWidth / 2, boxTop + boxHeight / 2);
-    }
+	}
 
-    drawTitle(logo, noticeVisible) {
-        // Frame borders
-		var frameHeight = 15 * BLOCK_HEIGHT;
-		var frameWidth = 25 * BLOCK_WIDTH;
+	drawTitle(logo, noticeVisible) {
+		// Frame borders
+		var frameHeight = 15 * this.blockHeight;
+		var frameWidth = 25 * this.blockWidth;
 		var frameLeft = (this.width - frameWidth) / 2;
 		var frameTop = (this.height - frameHeight) / 2;
 
@@ -238,13 +251,13 @@ class CanvasRenderer {
 		this.context.fillRect(frameLeft, frameTop, frameWidth, frameHeight);
 
 		// Logo
-		var logoLeft = (this.width - 23 * BLOCK_WIDTH) / 2;
-		var logoTop = (this.height - 13 * BLOCK_HEIGHT) / 2;
+		var logoLeft = (this.width - 23 * this.blockWidth) / 2;
+		var logoTop = (this.height - 13 * this.blockHeight) / 2;
 		for (var x = 0; x < logo.length; x++) {
 			for (var y = 0; y < logo[x].length; y++) {
 				if (logo[x][y]) {
-					var blockX = logoLeft + x * BLOCK_WIDTH;
-					var blockY = logoTop + y * BLOCK_HEIGHT;
+					var blockX = logoLeft + x * this.blockWidth;
+					var blockY = logoTop + y * this.blockHeight;
 					this.drawBlock(blockX, blockY, logo[x][y]);
 				}
 			}
@@ -259,7 +272,7 @@ class CanvasRenderer {
 			this.context.fillText("PRESS THE 'X' KEY", this.width / 2, this.height / 2);
 		}
 		// }
-		
+
 		this.context.restore();
-    }
+	}
 }
