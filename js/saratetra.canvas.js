@@ -73,26 +73,32 @@ class CanvasRenderer {
         this.context.fillRect(x + 0.6 * BLOCK_WIDTH, y + 0.1 * BLOCK_HEIGHT, 0.25 * BLOCK_WIDTH, 0.25 * BLOCK_HEIGHT);
     }
 
-    drawWell(x, y, debris, fallingCol, fallingRow, fallingPiece, rowsToClear, state, gameOverStep) {
+    drawWell(rows, columns, debris, fallingCol, fallingRow, fallingPiece, rowsToClear, state, gameOverStep) {
+        // Well starting position
+        var wellHeight = rows * BLOCK_HEIGHT;
+        var wellWidth = columns * BLOCK_HEIGHT;
+        var x = this.width / 2 - wellWidth / 2;
+		var y = this.height / 2 - wellHeight / 2;
+
         // Border
 		this.context.strokeStyle = this.borderColour;
 		this.context.lineWidth = 2;
-		this.context.strokeRect(x, y, WELL_WIDTH, WELL_HEIGHT);
+		this.context.strokeRect(x, y, wellWidth, wellHeight);
 		this.context.save();
 
 		// {
 		// Clip inside of border
 		this.context.beginPath();
-		this.context.rect(x + 1, y + 1, WELL_WIDTH - 2, WELL_HEIGHT - 2);
+		this.context.rect(x + 1, y + 1, wellWidth - 2, wellHeight - 2);
 		this.context.clip();
 
 		// Back colour
 		this.context.fillStyle = this.backColour;
-		this.context.fillRect(x, y, WELL_WIDTH, WELL_HEIGHT);
+		this.context.fillRect(x, y, wellWidth, wellHeight);
 
 		// Debris blocks
-		for (var dx = 0; dx < WELL_COLUMNS; dx++) {
-			for (var dy = 0; dy < WELL_ROWS; dy++) {
+		for (var dx = 0; dx < columns; dx++) {
+			for (var dy = 0; dy < rows; dy++) {
 				var block = debris[dx][dy];
 				if (block) {
 					this.drawBlock(x + dx * BLOCK_WIDTH, y + dy * BLOCK_HEIGHT, block.blockColour);
@@ -110,19 +116,19 @@ class CanvasRenderer {
 			// Get row index of cleared row
 			var clearRow = rowsToClear[row];
 			this.context.fillStyle = this.rowClearColour;
-			this.context.fillRect(x, y + clearRow * BLOCK_HEIGHT, WELL_WIDTH, BLOCK_HEIGHT);
+			this.context.fillRect(x, y + clearRow * BLOCK_HEIGHT, wellWidth, BLOCK_HEIGHT);
 		}
 
 		// Game over animation
 		if (state == WellState.GAME_ENDING || state == WellState.GAME_OVER) {
 			for (var goRow = 0; goRow < gameOverStep; goRow++) {
 				var rowColour = gameOverColours[gameOverStep];
-				for (var goCol = 0; goCol < WELL_COLUMNS; goCol++) {
+				for (var goCol = 0; goCol < columns; goCol++) {
 					// From the top
 					this.drawBlock(x + goCol * BLOCK_WIDTH, y + goRow * BLOCK_HEIGHT, gameOverColours[goRow]);
 
 					// From the bottom
-					this.drawBlock(x + goCol * BLOCK_WIDTH, y + (WELL_ROWS - goRow - 1) * BLOCK_HEIGHT, gameOverColours[goRow]);
+					this.drawBlock(x + goCol * BLOCK_WIDTH, y + (rows - goRow - 1) * BLOCK_HEIGHT, gameOverColours[goRow]);
 				}
 			}
 		}

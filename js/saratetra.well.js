@@ -42,17 +42,17 @@ var gameOverColours = [
 class Well {
 	constructor() {
 		this.state = WellState.GAME_OVER;
+		this.rows = 20;
+		this.columns = 10;
 		this.fallingPiece = null;
 		this.fallingCol = 5;
 		this.fallingRow = 2;
-		this.debris = new Array(WELL_COLUMNS);
-		for (var i = 0; i < WELL_COLUMNS; i++) {
-			this.debris[i] = new Array(WELL_ROWS);
+		this.debris = new Array(this.columns);
+		for (var i = 0; i < this.columns; i++) {
+			this.debris[i] = new Array(this.rows);
 		}
 		this.rowsToClear = [];
 		this.gameOverStep = 0;
-		this.x = SCREEN_WIDTH / 2 - WELL_WIDTH / 2;
-		this.y = SCREEN_HEIGHT / 2 - WELL_HEIGHT / 2;
 	}
 	// clear(): Clear the well of falling blocks and debris.
 	clear() {
@@ -65,7 +65,7 @@ class Well {
 	}
 	// draw(): Draw the well and its contents.
 	draw(renderer) {
-		renderer.drawWell(this.x, this.y, this.debris, 
+		renderer.drawWell(this.rows, this.columns, this.debris, 
 			this.fallingCol, this.fallingRow, this.fallingPiece, 
 			this.rowsToClear, this.state, this.gameOverStep);
 	}
@@ -106,9 +106,9 @@ class Well {
 	// eliminateRows(): Find and destroy rows.
 	eliminateRows() {
 		// Find rows from the bottom up
-		for (var row = WELL_ROWS - 1; row >= 0; row--) {
+		for (var row = this.rows - 1; row >= 0; row--) {
 			var goodRow = true;
-			for (var col = 0; col < WELL_COLUMNS; col++) {
+			for (var col = 0; col < this.columns; col++) {
 				var block = this.debris[col][row];
 
 				// Stop looking on empty block
@@ -140,7 +140,7 @@ class Well {
 
 				// Cascade rows from bottom up
 				for (var row = clearRow; row > 0; row--) {
-					for (var col = 0; col < WELL_COLUMNS; col++) {
+					for (var col = 0; col < this.columns; col++) {
 						// Get top block
 						var topBlock = this.debris[col][row - 1];
 
@@ -156,7 +156,7 @@ class Well {
 			}
 
 			// Clear top-most row
-			for (var col = 0; col < WELL_COLUMNS; col++) {
+			for (var col = 0; col < this.columns; col++) {
 				this.debris[col][row] = null;
 			}
 		}
@@ -263,7 +263,7 @@ class Well {
 		var blocks = piece.getBlocks();
 		for (var i = 0; i < blocks.length; i++) {
 			// Check lower boundary
-			if ((row + blocks[i].rowOffset) >= WELL_ROWS) {
+			if ((row + blocks[i].rowOffset) >= this.rows) {
 				return true;
 			}
 
@@ -299,7 +299,7 @@ class Well {
 		var blocks = piece.getBlocks();
 		for (var i = 0; i < blocks.length; i++) {
 			// Check right boundary
-			if ((col + blocks[i].colOffset) >= WELL_COLUMNS) {
+			if ((col + blocks[i].colOffset) >= this.columns) {
 				return true;
 			}
 
@@ -317,7 +317,7 @@ class Well {
 		var blocks = piece.getBlocks();
 		for (var i = 0; i < blocks.length; i++) {
 			// Check lower boundary
-			if ((row + blocks[i].rowOffset) > WELL_ROWS) {
+			if ((row + blocks[i].rowOffset) > this.rows) {
 				return true;
 			}
 
@@ -327,7 +327,7 @@ class Well {
 			}
 
 			// Check right boundary
-			if ((col + blocks[i].colOffset) > WELL_COLUMNS) {
+			if ((col + blocks[i].colOffset) > this.columns) {
 				return true;
 			}
 
