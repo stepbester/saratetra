@@ -2,14 +2,15 @@
  * Saratetris game class.
  */
 class TetraEngine {
-	constructor(renderer, refreshPerSecond, flashRate, moveRate, fallRate, clearRate) {
+	constructor(renderer, timingOptions = {}) {
 		this.renderer = renderer;
-		this.rps = refreshPerSecond;
-		this.flashRate = flashRate;
-		this.moveRate = moveRate;
-		this.fallRate = fallRate;
-		this.clearRate = clearRate;
 		this.views = [];
+
+		this.rps = timingOptions.refreshPerSecond || 20; // The number of times the engine state is updated per second
+		this.flashRate = timingOptions.flashRate || (this.rps / 2); // The rate at which the title hint text flashes
+		this.moveRate = timingOptions.moveRate || (this.rps / 20); // The rate at which a tetromino can be moved laterally
+		this.fallRate = timingOptions.fallRate || (this.rps / 1); // The rate at which the player can cause a tetromino to descend
+		this.clearRate = timingOptions.clearRate || (this.rps / 10); // The rate at which cleared rows are removed from the well
 	}
 	openStartingView() {
 		this.openView(new TitleView(engine, this.flashRate));

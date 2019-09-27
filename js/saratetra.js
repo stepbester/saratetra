@@ -7,8 +7,8 @@ function init() {
 	var canvas = document.getElementById("tetra-game");
 
 	// Create game objects
-	var renderer = new CanvasRenderer(canvas, 800, 600); 
-	engine = new TetraEngine(renderer, 20, (20/2), (20/20), (20/1), (20/10)); // TODO: Make timing options more readable
+	var renderer = new CanvasRenderer(canvas, 800, 600);
+	engine = new TetraEngine(renderer);
 	engine.openStartingView();
 	engine.draw();
 }
