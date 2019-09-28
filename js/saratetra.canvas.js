@@ -1,7 +1,10 @@
+var GameOverColours = require("./saratetra.well.js").GameOverColours;
+var WellState = require("./saratetra.well.js").WellState;
+
 /**
  * Saratetra canvas renderer.
  */
-class CanvasRenderer {
+module.exports = class CanvasRenderer {
 	constructor(canvas, screenWidth, screenHeight) {
 		this.context = canvas.getContext("2d");
 		this.width = screenWidth;
@@ -135,13 +138,13 @@ class CanvasRenderer {
 		// Game over animation
 		if (state == WellState.GAME_ENDING || state == WellState.GAME_OVER) {
 			for (var goRow = 0; goRow < gameOverStep; goRow++) {
-				var rowColour = gameOverColours[gameOverStep];
+				var rowColour = GameOverColours[gameOverStep];
 				for (var goCol = 0; goCol < columns; goCol++) {
 					// From the top
-					this.drawBlock(x + goCol * this.blockWidth, y + goRow * this.blockHeight, gameOverColours[goRow]);
+					this.drawBlock(x + goCol * this.blockWidth, y + goRow * this.blockHeight, GameOverColours[goRow]);
 
 					// From the bottom
-					this.drawBlock(x + goCol * this.blockWidth, y + (rows - goRow - 1) * this.blockHeight, gameOverColours[goRow]);
+					this.drawBlock(x + goCol * this.blockWidth, y + (rows - goRow - 1) * this.blockHeight, GameOverColours[goRow]);
 				}
 			}
 		}

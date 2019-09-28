@@ -1,0 +1,23 @@
+{
+  "name": "saratetra",
+  "version": "1.0.0",
+  "description": "A JavaScript tetris clone",
+  "main": "saratetra.js",
+  "scripts": {
+    "build": "browserify main.js -o saratetra.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stepbester/saratetra.git"
+  },
+  "keywords": [
+    "tetris"
+  ],
+  "author": "Stephan Bester",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/stepbester/saratetra/issues"
+  },
+  "homepage": "https://github.com/stepbester/saratetra#readme",
+  "dependencies": {}
+}

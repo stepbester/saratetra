@@ -1,24 +1,4 @@
-/**
- * Tetromino block colour scheme class.
- */
-class BlockColour {
-	constructor(front, back, shine) {
-		this.front = front;
-		this.back = back;
-		this.shine = shine;
-	}
-}
-
-/**
- * Seratetra standard colours.
- */
-var BLOCK_RED = new BlockColour("#ff0033", "#cc0000", "#ff6699");
-var BLOCK_BLUE = new BlockColour("#1e90ff", "#0b60cc", "#7ff6ff");
-var BLOCK_ORANGE = new BlockColour("#ff8800", "#cc5500", "#ffee66");
-var BLOCK_YELLOW = new BlockColour("#ffd700", "#cca400", "#fffd66");
-var BLOCK_PURPLE = new BlockColour("#da70d6", "#a740a3", "#ffd6fc");
-var BLOCK_GREEN = new BlockColour("#00ff44", "#00cc11", "#99ffaa"); // breaking the rules on the shine colour because otherwise it's too blue
-var BLOCK_CYAN = new BlockColour("#b0e0e6", "#7dadb3", "#f6f6fc");
+var Colours = require("./saratetra.blockColours.js").Colours;
 
 /**
  * Saratetra tetromino class.
@@ -58,7 +38,7 @@ class I extends Tetromino {
 		this.rotatable = true;
 		this.rows = 4;
 		this.columns = 4;
-		this.colour = BLOCK_RED;
+		this.colour = Colours.Red;
 	}
 	getBlocks() {
 		switch (this.orientation) {
@@ -175,7 +155,7 @@ class O extends Tetromino {
 		this.rotatable = false;
 		this.columns = 4;
 		this.rows = 3;
-		this.colour = BLOCK_BLUE;
+		this.colour = Colours.Blue;
 	}
 	getBlocks() {
 		/*
@@ -212,7 +192,7 @@ class T extends Tetromino {
 		this.rotatable = true;
 		this.columns = 3;
 		this.rows = 3;
-		this.colour = BLOCK_ORANGE;
+		this.colour = Colours.Orange;
 	}
 	getBlocks() {
 		switch (this.orientation) {
@@ -325,7 +305,7 @@ class J extends Tetromino {
 		this.rotatable = true;
 		this.columns = 3;
 		this.rows = 3;
-		this.colour = BLOCK_YELLOW;
+		this.colour = Colours.Yellow;
 	}
 	getBlocks() {
 		switch (this.orientation) {
@@ -438,7 +418,7 @@ class L extends Tetromino {
 		this.rotatable = true;
 		this.columns = 3;
 		this.rows = 3;
-		this.colour = BLOCK_PURPLE;
+		this.colour = Colours.Purple;
 	}
 	getBlocks() {
 		switch (this.orientation) {
@@ -551,7 +531,7 @@ class S extends Tetromino {
 		this.rotatable = true;
 		this.columns = 3;
 		this.rows = 3;
-		this.colour = BLOCK_GREEN;
+		this.colour = Colours.Green;
 	}
 	getBlocks() {
 		switch (this.orientation) {
@@ -664,7 +644,7 @@ class Z extends Tetromino {
 		this.rotatable = true;
 		this.columns = 3;
 		this.rows = 3;
-		this.colour = BLOCK_CYAN;
+		this.colour = Colours.Cyan;
 	}
 	getBlocks() {
 		switch (this.orientation) {
@@ -812,3 +792,14 @@ class TetrominoGenerator {
 		return returnPiece;
 	}
 }
+
+module.exports = {
+	I: I,
+	O: O,
+	T: T,
+	J: J,
+	L: L,
+	S: S,
+	Z: Z,
+	Generator: TetrominoGenerator
+};

@@ -1,7 +1,7 @@
 /**
  * Saratetra stats class.
  */
-class Stats {
+module.exports = class Stats {
 	constructor() {
 		this.resetTotals();
 	}
@@ -22,4 +22,4 @@ class Stats {
 	draw(renderer) {
 		renderer.drawStats(this.totals);
 	}
-}
+};

@@ -1,3 +1,5 @@
+var Colours = require("./saratetra.blockColours.js").Colours;
+
 /**
  * Saratetra debris block class.
  */
@@ -23,17 +25,17 @@ var WellState = Object.freeze({
 /**
  * Colour composition of the game over rainbow. :-)
  */
-var gameOverColours = [
-	BLOCK_RED,
-	BLOCK_BLUE,
-	BLOCK_ORANGE,
-	BLOCK_YELLOW,
-	BLOCK_PURPLE,
-	BLOCK_GREEN,
-	BLOCK_CYAN,
-	BLOCK_RED,
-	BLOCK_BLUE,
-	BLOCK_ORANGE
+var GameOverColours = [
+	Colours.Red,
+	Colours.Blue,
+	Colours.Orange,
+	Colours.Yellow,
+	Colours.Purple,
+	Colours.Green,
+	Colours.Cyan,
+	Colours.Red,
+	Colours.Blue,
+	Colours.Orange
 ];
 
 /**
@@ -341,3 +343,9 @@ class Well {
 		return false;
 	}
 }
+
+module.exports = {
+	GameOverColours: GameOverColours,
+	WellState: WellState,
+	Well: Well
+};
