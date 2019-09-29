@@ -6,4 +6,5 @@ deploy:
     access_key_id: "AKIA3J3WNVATD7C6BIEU"
     secret_access_key:
         secure: "gOLl0n3fehMwRFq5SMUaf6vbwXtSpkz77MkAXzX83qZ3T6Y9F9ZKKJe49Nn71vbpTBmjVx1JIHnCFFRH64I6aiMjup9s0UE2jmNgwxvj8GoTMWxVCmjzVmEU9Vx4Ot3mbCj/STri3YOqSQUs/wKeICtwBGNRqkhkdU51SruiyAN/IyxFnOhOjYwNq1YVqo/BFFHeBj9E0BLAhOBdsgD2RQpP/NRiuCCZyvDsysO/tFLNPifB5yL3W7bRClXkSBcXtgveHqX7a+bf9NyQH/FB5N+REjuis3L+oK1ZjyzGuaLV8Uj38JBoHOtgLuineVvaBpGg+OahWNHPFzwDzs0KIKnbXHfQ9Zgfwe4PFEZzHS7maH3Kxfayonp9bwQAPFRMYam84x7nZlFiSrK3OzjJL7GKQn0D5wyaG3MAjW26ZBDWIfMdPltgtzCUbf8nIxjxvx8kiM9hwZG6RHhcgcsXiNpUJfXlb6zU0MBGh5C318DBGZS/ssjYbsz7n4+CFOZSG6H/PBllMrQbJ/Tz+bOCPTmHIb0vHqJujF1wzQnkjdGzseipp4MuCWtwdhJ79qPw8K597dtWARoMK7B/NVcqllOhGM0/zfxKAWtas7iA8+Jg5NS8fIS7nda3Fp4crf0aJyI6XppweZ1Mgz84kvA2wdcHOrihFZX2M3alz+y9ZyA="
-    bucket: "Saratetra"
+    bucket: "saratetra"
+    region: "us-west-2"
