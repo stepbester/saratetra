@@ -4,7 +4,7 @@
   "description": "A JavaScript tetris clone",
   "main": "saratetra.js",
   "scripts": {
-    "build": "browserify main.js -o saratetra.js"
+    "build": "browserify main.js -o deploy/saratetra.js"
   },
   "repository": {
     "type": "git",
