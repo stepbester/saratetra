@@ -1,12 +1,9 @@
 var View = require("../saratetra.view.js");
 var GameplayController = require("../controllers/saratetra.controller.gameplay.js");
 var UserFunctions = require("../saratetra.input.js").UserFunctions;
-var Tetromino = require("../saratetra.tetrominoes.js");
-var LevelBox = require("../saratetra.levelBox.js");
-var Well = require("../saratetra.well.js").Well;
-var WellState = require("../saratetra.well.js").WellState;
-var NextBox = require("../saratetra.nextBox.js");
-var Stats = require("../saratetra.stats.js");
+var Tetrominoes = require("../saratetra.tetrominoes.js");
+var WellComponents = require("../saratetra.well.js");
+var HudComponents = require("../saratetra.hud.js");
 
 /**
  * Saratetra gameplay view class.
@@ -23,12 +20,12 @@ module.exports = class GameplayView extends View {
         this.lines = 0;
         this.background = new Image();
         this.background.src = "img/earth.jpg";
-        this.generator = new Tetromino.Generator();
+        this.generator = new Tetrominoes.Generator();
         this.waitTime = 0;
-        this.levelBox = new LevelBox();
-        this.well = new Well();
-        this.nextBox = new NextBox();
-        this.stats = new Stats();
+        this.well = new WellComponents.Well();
+        this.levelBox = new HudComponents.LevelBox();
+        this.nextBox = new HudComponents.NextBox();
+        this.stats = new HudComponents.Stats();
         this.reset();
     }
     reset() {
@@ -59,7 +56,7 @@ module.exports = class GameplayView extends View {
         View.prototype.tick.call(this);
         // Check state
         switch (this.well.state) {
-            case WellState.PIECE_FALLING:
+            case WellComponents.WellState.PIECE_FALLING:
                 // Process actions
                 var left = this.controller.executeAction(UserFunctions.LEFT);
                 var right = this.controller.executeAction(UserFunctions.RIGHT);
@@ -89,7 +86,7 @@ module.exports = class GameplayView extends View {
                     }
                 }
                 break;
-            case WellState.PIECE_STUCK:
+            case WellComponents.WellState.PIECE_STUCK:
                 // After wait, freeze the stuck piece
                 this.well.freezePiece();
 
@@ -103,7 +100,7 @@ module.exports = class GameplayView extends View {
                     // TODO: Update score
                 }
                 break;
-            case WellState.PENDING_NEXT_PIECE:
+            case WellComponents.WellState.PENDING_NEXT_PIECE:
                 if (this.well.isLandingClear(this.generator.peek())) {
                     // Insert a new piece
                     this.well.insertPiece(this.generator.pop());
@@ -121,7 +118,7 @@ module.exports = class GameplayView extends View {
                     this.waitTime = 10;
                 }
                 break;
-            case WellState.GAME_ENDING:
+            case WellComponents.WellState.GAME_ENDING:
                 if (this.waitTime > 0) {
                     // Lessen wait time
                     this.waitTime--;
@@ -130,12 +127,12 @@ module.exports = class GameplayView extends View {
                     this.well.animateEnding(10 - this.waitTime);
                 }
                 break;
-            case WellState.GAME_OVER:
+            case WellComponents.WellState.GAME_OVER:
                 if (this.onGameOver) {
                     this.onGameOver(this);
                 }
                 break;
-            case WellState.CLEARING_ROWS:
+            case WellComponents.WellState.CLEARING_ROWS:
                 if (this.waitTime > 0) {
                     // Perform waiting
                     this.waitTime--;
@@ -144,7 +141,7 @@ module.exports = class GameplayView extends View {
                     this.well.collapseDebris();
                 }
                 break;
-            case WellState.ROWS_CLEARED:
+            case WellComponents.WellState.ROWS_CLEARED:
                 // TODO: Nothing?
                 break;
         }
