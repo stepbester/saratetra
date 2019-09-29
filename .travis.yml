@@ -9,3 +9,4 @@ deploy:
     bucket: "saratetra"
     region: "us-west-2"
     local_dir: "deploy"
+    skip_cleanup: true
