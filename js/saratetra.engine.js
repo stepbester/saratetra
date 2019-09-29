@@ -1,4 +1,6 @@
 var TitleView = require("./views/saratetra.view.title.js");
+var GameplayView = require("./views/saratetra.view.gameplay.js");
+var GameOverView = require("./views/saratetra.view.gameover.js");
 var KeyMappings = require("./saratetra.input.js").KeyMappings;
 
 /**
@@ -34,11 +36,33 @@ module.exports = class TetraEngine {
 		}, 1000 / this.rps);
 
 		// Start by drawing the first view
-		this.openStartingView();
+		this.startGame();
 		this.draw();
 	}
-	openStartingView() {
-		this.openView(new TitleView(this, this.flashRate));
+	startGame() {
+		var engine = this; // this hack
+
+		var titleView = new TitleView(this, this.flashRate);
+		titleView.onStartGame = function () {
+			var gameplayView = new GameplayView(engine);
+			gameplayView.onGameOver = function() {
+				var gameOver = new GameOverView(engine);
+
+                // When game over view is closed, return to title
+                var gameplay = this;
+                gameOver.onClose = function () {
+                    gameplay.close();
+                };
+
+                // Display game over message
+                engine.openView(gameOver);
+			};
+
+			// Go to gameplay view
+			engine.openView(gameplayView);
+		}
+		// Go to title view
+		this.openView(titleView);
 	}
 	openView(view) {
 		this.views.push(view);

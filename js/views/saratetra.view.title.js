@@ -2,7 +2,6 @@ var View = require("../saratetra.view.js");
 var Colours = require("../saratetra.blockColours.js").Colours;
 var TitleController = require("../controllers/saratetra.controller.title.js");
 var UserFunctions = require("../saratetra.input.js").UserFunctions;
-var GameplayView = require("./saratetra.view.gameplay.js");
 
 /**
  * Saratetra title view class.
@@ -12,6 +11,7 @@ module.exports = class TitleView extends View {
         super(engine);
         this.flashRate = flashRate;
         this.controller = new TitleController(engine);
+        this.onStartGame = null;
         this.noticeVisible = false;
         this.background = new Image();
         this.background.src = "img/stars.jpg";
@@ -144,8 +144,9 @@ module.exports = class TitleView extends View {
         }
         // Process actions
         if (this.controller.executeAction(UserFunctions.SELECT)) {
-            // Go to gameplay view
-            this.engine.openView(new GameplayView(this.engine));
+            if (this.onStartGame) {
+                this.onStartGame();
+            }
         }
     }
     draw(renderer) {

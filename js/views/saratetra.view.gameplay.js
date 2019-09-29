@@ -7,7 +7,6 @@ var Well = require("../saratetra.well.js").Well;
 var WellState = require("../saratetra.well.js").WellState;
 var NextBox = require("../saratetra.nextBox.js");
 var Stats = require("../saratetra.stats.js");
-var GameOverView = require("./saratetra.view.gameover.js");
 
 /**
  * Saratetra gameplay view class.
@@ -16,6 +15,7 @@ module.exports = class GameplayView extends View {
     constructor(engine) {
         super(engine);
         this.controller = new GameplayController(engine);
+        this.onGameOver = null;
         this.blockInput = true;
         this.fallSpeedPerLevel = 1;
         this.level = 1;
@@ -131,16 +131,9 @@ module.exports = class GameplayView extends View {
                 }
                 break;
             case WellState.GAME_OVER:
-                var gameOver = new GameOverView(this.engine);
-
-                // When game over view is closed, return to title
-                var gameplay = this;
-                gameOver.onClose = function () {
-                    gameplay.close();
-                };
-
-                // Display game over message
-                this.engine.openView(gameOver);
+                if (this.onGameOver) {
+                    this.onGameOver(this);
+                }
                 break;
             case WellState.CLEARING_ROWS:
                 if (this.waitTime > 0) {
