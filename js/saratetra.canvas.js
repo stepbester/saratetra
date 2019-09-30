@@ -34,7 +34,7 @@ module.exports = class CanvasRenderer {
 	drawLevelBox(level) {
 		var boxHeight = 115;
 		var boxWidth = 160;
-		var boxLeft = this.borderPadding + 40;
+		var boxLeft = this.borderPadding + 20;
 		var boxTop = this.borderPadding;
 
 		// Border
@@ -167,7 +167,7 @@ module.exports = class CanvasRenderer {
 	drawNextBox(tetromino) {
 		var boxHeight = 190;
 		var boxWidth = 160;
-		var boxLeft = this.width - this.borderPadding - boxWidth - 40;
+		var boxLeft = this.width - this.borderPadding - boxWidth - 20;
 		var boxTop = this.borderPadding;
 
 		// Border
@@ -197,6 +197,54 @@ module.exports = class CanvasRenderer {
 		if (tetromino) {
 			tetromino.draw(this, boxLeft + (boxWidth / 2) + ((4 - tetromino.columns) / 2) * this.blockWidth, boxTop + 20 + (boxHeight / 2) + ((4 - tetromino.rows) / 2) * this.blockHeight);
 		}
+		// }
+
+		this.context.restore();
+	}
+
+	drawScoreBox(score, lines) {
+		var boxHeight = 145;
+		var boxWidth = 160;
+		var boxLeft = this.width - this.borderPadding - boxWidth - 20;
+		var boxTop = this.borderPadding + 220;
+
+		// Border
+		this.context.strokeStyle = this.borderColour;
+		this.context.lineWidth = 2;
+		this.context.strokeRect(boxLeft, boxTop, boxWidth, boxHeight);
+		this.context.save();
+
+		// {
+		// Clip inside of border
+		this.context.beginPath();
+		this.context.rect(boxLeft + 1, boxTop + 1, boxWidth - 2, boxHeight - 2);
+		this.context.clip();
+
+		// Back colour
+		this.context.fillStyle = this.backColour;
+		this.context.fillRect(boxLeft, boxTop, boxWidth, boxHeight);
+
+		// Score
+		this.context.font = "bold 22px Arial";
+		this.context.fillStyle = this.textColour;
+		this.context.textAlign = "left";
+		this.context.textBaseline = "top";
+		this.context.fillText("SCORE", boxLeft + this.borderPadding, boxTop + this.borderPadding);
+		this.context.font = "bold 26px Consolas";
+		this.context.textAlign = "right";
+		this.context.textBaseline = "middle";
+		this.context.fillText(score, boxLeft + boxWidth - this.borderPadding, boxTop + this.borderPadding + 45);
+
+		// Lines
+		this.context.font = "bold 22px Arial";
+		this.context.fillStyle = this.textColour;
+		this.context.textAlign = "left";
+		this.context.textBaseline = "top";
+		this.context.fillText("LINES", boxLeft + this.borderPadding, boxTop + this.borderPadding + 65);
+		this.context.font = "bold 26px Consolas";
+		this.context.textAlign = "right";
+		this.context.textBaseline = "middle";
+		this.context.fillText(lines, boxLeft + boxWidth - this.borderPadding, boxTop + this.borderPadding + 110);
 		// }
 
 		this.context.restore();

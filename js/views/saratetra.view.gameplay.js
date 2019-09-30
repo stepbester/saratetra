@@ -15,27 +15,38 @@ module.exports = class GameplayView extends View {
         this.onGameOver = null;
         this.blockInput = true;
         this.fallSpeedPerLevel = 1;
-        this.level = 1;
-        this.score = 0;
-        this.lines = 0;
         this.background = new Image();
         this.background.src = "img/earth.jpg";
         this.generator = new Tetrominoes.Generator();
         this.waitTime = 0;
         this.well = new WellComponents.Well();
         this.levelBox = new HudComponents.LevelBox();
+        this.scoreBox = new HudComponents.ScoreBox();
         this.nextBox = new HudComponents.NextBox();
         this.stats = new HudComponents.Stats();
         this.reset();
     }
+    setLevel(value) {
+        this.level = value;
+        this.levelBox.leve = value;
+    }
+    setScore(value) {
+        this.score = value;
+        this.scoreBox.score = value;
+    }
+    setLines(value) {
+        this.lines = value;
+        this.scoreBox.lines = value;
+    }
     reset() {
-        this.level = 1;
-        this.score = 0;
-        this.lines = 0;
+        this.setLevel(1);
+        this.setScore(0);
+        this.setLines(0);
         this.waitTime = this.getLevelFallTime();
         this.well.clear();
         this.stats.clear();
         this.levelBox.level = this.level;
+        this.scoreBox.score = this.score;
         this.well.insertPiece(this.generator.pop());
         this.nextBox.tetromino = this.generator.peek();
     }
@@ -45,6 +56,7 @@ module.exports = class GameplayView extends View {
 
         // Draw components
         this.levelBox.draw(renderer);
+        this.scoreBox.draw(renderer);
         this.well.draw(renderer);
         this.nextBox.draw(renderer);
         this.stats.draw(renderer);
@@ -97,7 +109,27 @@ module.exports = class GameplayView extends View {
                     // Clearing rows introduce a pause for the player to see what is happening
                     this.waitTime = this.engine.clearRate;
 
-                    // TODO: Update score
+                    // Update lines
+                    this.setLines(this.lines + clearedRows);
+
+                    // Update score
+                    var bonus = 0;
+                    switch (clearedRows)
+                    {
+                        case 1:
+                            bonus = 10;
+                            break;
+                        case 2:
+                            bonus = 25;
+                            break;
+                        case 3:
+                            bonus = 75;
+                            break;
+                        case 4:
+                            bonus = 300;
+                            break;
+                    }
+                    this.setScore(this.score + this.level * bonus);
                 }
                 break;
             case WellComponents.WellState.PENDING_NEXT_PIECE:

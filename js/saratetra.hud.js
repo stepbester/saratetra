@@ -23,6 +23,19 @@ class NextBox {
 };
 
 /**
+ * Saratetra score box class.
+ */
+class ScoreBox {
+	constructor() {
+		this.score = 0;
+		this.lines = 0;
+	}
+	draw(renderer) {
+		renderer.drawScoreBox(this.score, this.lines);
+	}
+}
+
+/**
  * Saratetra stats class.
  */
 class Stats {
@@ -49,7 +62,8 @@ class Stats {
 };
 
 module.exports = {
-    LevelBox: LevelBox,
+	LevelBox: LevelBox,
+	ScoreBox: ScoreBox,
     NextBox: NextBox,
     Stats: Stats
 };
