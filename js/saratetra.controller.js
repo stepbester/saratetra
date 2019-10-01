@@ -43,6 +43,14 @@ class Controller {
 			action.status = ActionStatus.NOT_SCHEDULED;
 		}
 	}
+	// cancelActions(): Cancel all actions.
+	cancelActions() {
+		for (var key in this.actions) {
+			if (this.actions.hasOwnProperty(key)) {
+				this.actions[key].status = ActionStatus.NOT_SCHEDULED;
+			}
+		}
+	}
 	// executeAction(): Return whether an action is scheduled, and set to executed if so, assuming that the view will take care of it.
 	executeAction(userFunction) {
 		var action = this.actions[userFunction];

@@ -1,21 +1,73 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>SARATETRA</title>
-		<meta charset="utf-8" />
-		<script src="saratetra.js"></script>
-		<link rel="stylesheet" href="saratetra.css"></link>
-	</head>
-	<body>
-		<div id="tetra-gui">
-			<div class="tetra-header">
-				<div id="tetra-logo">
-					SARATETRA
-				</div>
+
+<head>
+	<title>SARATETRA</title>
+	<meta charset="utf-8" />
+	<script src="saratetra.js"></script>
+	<link rel="stylesheet" href="saratetra.css">
+	</link>
+</head>
+
+<body>
+	<main>
+		<div class="tetra-header">
+			<div id="tetra-logo">
+				SARATETRA
 			</div>
-			
-			<canvas id="tetra-game" height="600" width="800">
-			</canvas>
 		</div>
-	</body>
+
+		<canvas id="tetra-game" height="600" width="800">
+		</canvas>
+
+		<div id="tetra-info">
+			<div class="column-left">
+				<strong>Description</strong>
+				<p>This simple tetris clone is written in JavaScript and uses the HTML5 canvas for graphics.</p>
+
+				<strong>Scoring</strong>
+				<p>Earn points by clearing lines!</p>
+				<table>
+					<colgroup>
+						<col />
+						<col />
+					</colgroup>
+					<tr>
+						<th>1 line</th>
+						<td>10 pts</td>
+					</tr>
+					<tr>
+						<th>2 lines</th>
+						<td>25 pts</td>
+					</tr>
+					<tr>
+						<th>3 lines</th>
+						<td>75 pts</td>
+					</tr>
+					<tr>
+						<th>4 lines</th>
+						<td>300 pts</td>
+					</tr>
+				</table>
+				<p>Points are multiplied by the number of the level.</p>
+			</div>
+			<div class="column-right">
+				<strong>Controls</strong>
+				<dl>
+					<dt>'X' key</dt>
+					<dd>Start the game.</dd>
+					<dt>'P' key</dt>
+					<dd>Pause/unpause the game.</dd>
+					<dt>Left/right arrow</dt>
+					<dd>Move the tetromino left or right</dd>
+					<dt>Up arrow</dt>
+					<dd>Rotate the tetromino</dd>
+					<dt>Down arrow</dt>
+					<dd>Force dop the tetromino</dd>
+				</dl>
+			</div>
+		</div>
+	</main>
+</body>
+
 </html>

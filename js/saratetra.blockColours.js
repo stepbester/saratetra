@@ -2,11 +2,11 @@
  * Tetromino block colour scheme class.
  */
 class BlockColour {
-	constructor(front, back, shine) {
-		this.front = front;
-		this.back = back;
-		this.shine = shine;
-	}
+    constructor(front, back, shine) {
+        this.front = front;
+        this.back = back;
+        this.shine = shine;
+    }
 }
 
 /**

@@ -142,6 +142,7 @@ module.exports = class TitleView extends View {
         if (this.time % this.flashRate == 0) {
             this.noticeVisible = !this.noticeVisible;
         }
+        
         // Process actions
         if (this.controller.executeAction(UserFunctions.SELECT)) {
             if (this.onStartGame) {

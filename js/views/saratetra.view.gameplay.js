@@ -13,6 +13,7 @@ module.exports = class GameplayView extends View {
         super(engine);
         this.controller = new GameplayController(engine);
         this.onGameOver = null;
+        this.onPause = null;
         this.blockInput = true;
         this.fallSpeedPerLevel = 1;
         this.background = new Image();
@@ -69,11 +70,24 @@ module.exports = class GameplayView extends View {
         // Check state
         switch (this.well.state) {
             case WellComponents.WellState.PIECE_FALLING:
-                // Process actions
+                // Pause
+                if (this.controller.executeAction(UserFunctions.PAUSE)) {
+                    if (this.onPause) {
+                        this.onPause();
+                    }
+
+                    // Cancel all actions so keys don't get "stuck"
+                    this.controller.cancelActions();
+                    return;
+                }
+
+                // Get actions
                 var left = this.controller.executeAction(UserFunctions.LEFT);
                 var right = this.controller.executeAction(UserFunctions.RIGHT);
                 var up = this.controller.executeAction(UserFunctions.UP);
                 var down = this.controller.executeAction(UserFunctions.DOWN);
+
+                // Process actions
                 if ((!left) != (!right)) { // XOR
                     if (left) {
                         this.well.steerPieceLeft();
@@ -81,11 +95,13 @@ module.exports = class GameplayView extends View {
                         this.well.steerPieceRight();
                     }
                 }
+
                 if (up) {
                     this.well.rotatePiece();
                 } else if (down) {
                     this.well.dropPiece();
                 }
+
                 if (this.waitTime > 0) {
                     // Perform waiting
                     this.waitTime--;
@@ -114,8 +130,7 @@ module.exports = class GameplayView extends View {
 
                     // Update score
                     var bonus = 0;
-                    switch (clearedRows)
-                    {
+                    switch (clearedRows) {
                         case 1:
                             bonus = 10;
                             break;

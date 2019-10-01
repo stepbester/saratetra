@@ -2,6 +2,7 @@
  * UserFunctions enumeration.
  */
 var UserFunctions = Object.freeze({
+	ANY: 0,
 	LEFT: 1,
 	UP: 2,
 	RIGHT: 3,

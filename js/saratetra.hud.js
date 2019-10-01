@@ -64,6 +64,6 @@ class Stats {
 module.exports = {
 	LevelBox: LevelBox,
 	ScoreBox: ScoreBox,
-    NextBox: NextBox,
-    Stats: Stats
+	NextBox: NextBox,
+	Stats: Stats
 };

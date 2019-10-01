@@ -254,7 +254,7 @@ module.exports = class CanvasRenderer {
 		// TODO: Draw stats
 	}
 
-	drawGameOver() {
+	drawMessageBox(message) {
 		// Box borders
 		var boxHeight = 90;
 		var boxWidth = 240;
@@ -275,7 +275,7 @@ module.exports = class CanvasRenderer {
 		this.context.fillStyle = this.textColour;
 		this.context.textAlign = "center";
 		this.context.textBaseline = "middle";
-		this.context.fillText("GAME OVER", boxLeft + boxWidth / 2, boxTop + boxHeight / 2);
+		this.context.fillText(message, boxLeft + boxWidth / 2, boxTop + boxHeight / 2);
 	}
 
 	drawTitle(logo, noticeVisible) {

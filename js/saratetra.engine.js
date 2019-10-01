@@ -1,6 +1,8 @@
 var TitleView = require("./views/saratetra.view.title.js");
 var GameplayView = require("./views/saratetra.view.gameplay.js");
 var GameOverView = require("./views/saratetra.view.gameover.js");
+var PauseView = require("./views/saratetra.view.pause.js");
+var UserFunctions = require("./saratetra.input.js").UserFunctions;
 var KeyMappings = require("./saratetra.input.js").KeyMappings;
 
 /**
@@ -45,17 +47,22 @@ module.exports = class TetraEngine {
 		var titleView = new TitleView(this, this.flashRate);
 		titleView.onStartGame = function () {
 			var gameplayView = new GameplayView(engine);
-			gameplayView.onGameOver = function() {
+
+			gameplayView.onGameOver = function () {
 				var gameOver = new GameOverView(engine);
 
-                // When game over view is closed, return to title
-                var gameplay = this;
-                gameOver.onClose = function () {
-                    gameplay.close();
-                };
+				// When game over view is closed, return to title
+				gameOver.onClose = function () {
+					gameplayView.close();
+				};
 
-                // Display game over message
-                engine.openView(gameOver);
+				// Display game over message
+				engine.openView(gameOver);
+			};
+
+			gameplayView.onPause = function () {
+				// Display pause message
+				engine.openView(new PauseView(engine));
 			};
 
 			// Go to gameplay view
@@ -105,12 +112,15 @@ module.exports = class TetraEngine {
 		// Map to user function
 		var userFunction = KeyMappings[event.which];
 		if (userFunction) {
+			event.preventDefault();
+
 			// Broadcast functions to views until one of them blocks input
 			for (var i = this.views.length - 1; i >= 0; i--) {
 				var currentView = this.views[i];
 
 				// Feed function to controller
 				currentView.controller.startAction(userFunction);
+				currentView.controller.startAction(UserFunctions.ANY);
 				if (currentView.blockInput) {
 					break;
 				}
@@ -121,12 +131,15 @@ module.exports = class TetraEngine {
 		// Map to user function
 		var userFunction = KeyMappings[event.which];
 		if (userFunction) {
+			event.preventDefault();
+
 			// Broadcast functions to views until one of them blocks input
 			for (var i = this.views.length - 1; i >= 0; i--) {
 				var currentView = this.views[i];
 
 				// Feed user function to controller
 				currentView.controller.endAction(userFunction);
+				currentView.controller.startAction(UserFunctions.ANY);
 				if (currentView.blockInput) {
 					break;
 				}

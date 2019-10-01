@@ -1,14 +1,14 @@
 var View = require("../saratetra.view.js");
-var GameOverController = require("../controllers/saratetra.controller.gameover.js");
+var PauseController = require("../controllers/saratetra.controller.pause.js");
 var UserFunctions = require("../saratetra.input.js").UserFunctions;
 
 /**
- * Saratetra game over view class.
+ * Saratetra pause view class.
  */
-module.exports = class GameOverView extends View {
+module.exports = class PauseView extends View {
 	constructor(engine) {
 		super(engine);
-		this.controller = new GameOverController(engine);
+		this.controller = new PauseController(engine);
 		this.blockInput = true;
 		this.blockDraw = false;
 	}
@@ -16,12 +16,12 @@ module.exports = class GameOverView extends View {
 		View.prototype.tick.call(this);
 
 		// Process actions
-		if (this.controller.executeAction(UserFunctions.ANY)) {
+		if (this.controller.executeAction(UserFunctions.PAUSE)) {
 			// Close this view
 			this.close();
 		}
 	}
 	draw(renderer) {
-		renderer.drawMessageBox("GAME OVER");
+		renderer.drawMessageBox("PAUSE");
 	}
 }
