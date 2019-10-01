@@ -5,6 +5,7 @@ var Colours = require("./saratetra.blockColours.js").Colours;
  */
 class Tetromino {
 	constructor() {
+		this.key = null;
 		this.colour = null;
 		this.orientation = 0;
 		this.rotatable = false;
@@ -14,9 +15,9 @@ class Tetromino {
 	getBlocks() {
 		return [];
 	}
-	draw(renderer, x, y) {
+	draw(renderer, x, y, scale = 1) {
 		var blocks = this.getBlocks();
-		renderer.drawBlocks(x, y, blocks, this.colour);
+		renderer.drawBlocks(x, y, blocks, this.colour, scale);
 	}
 	rotate() {
 		if (this.rotatable) {
@@ -35,6 +36,7 @@ class Tetromino {
 class I extends Tetromino {
 	constructor() {
 		super();
+		this.key = "i";
 		this.rotatable = true;
 		this.rows = 4;
 		this.columns = 4;
@@ -152,6 +154,7 @@ class I extends Tetromino {
 class O extends Tetromino {
 	constructor() {
 		super();
+		this.key = "o";
 		this.rotatable = false;
 		this.columns = 4;
 		this.rows = 3;
@@ -189,6 +192,7 @@ class O extends Tetromino {
 class T extends Tetromino {
 	constructor() {
 		super();
+		this.key = "t";
 		this.rotatable = true;
 		this.columns = 3;
 		this.rows = 3;
@@ -302,6 +306,7 @@ class T extends Tetromino {
 class J extends Tetromino {
 	constructor() {
 		super();
+		this.key = "j";
 		this.rotatable = true;
 		this.columns = 3;
 		this.rows = 3;
@@ -415,6 +420,7 @@ class J extends Tetromino {
 class L extends Tetromino {
 	constructor() {
 		super();
+		this.key = "l";
 		this.rotatable = true;
 		this.columns = 3;
 		this.rows = 3;
@@ -528,6 +534,7 @@ class L extends Tetromino {
 class S extends Tetromino {
 	constructor() {
 		super();
+		this.key = "s";
 		this.rotatable = true;
 		this.columns = 3;
 		this.rows = 3;
@@ -641,6 +648,7 @@ class S extends Tetromino {
 class Z extends Tetromino {
 	constructor() {
 		super();
+		this.key = "z";
 		this.rotatable = true;
 		this.columns = 3;
 		this.rows = 3;

@@ -67,25 +67,31 @@ module.exports = class CanvasRenderer {
 		this.context.restore();
 	}
 
-	drawBlock(x, y, blockColour) {
+	drawBlock(x, y, blockColour, scale = 1) {
+		var scaledWidth = this.blockWidth * scale;
+		var scaledHeight = this.blockHeight * scale;
+
 		// Back
 		this.context.fillStyle = blockColour.back;
-		this.context.fillRect(x, y, this.blockWidth, this.blockHeight);
+		this.context.fillRect(x, y, scaledWidth, scaledHeight);
 
 		// Front
 		this.context.fillStyle = blockColour.front;
-		this.context.fillRect(x + 1, y + 1, this.blockWidth - 2, this.blockHeight - 2);
+		this.context.fillRect(x + 1, y + 1, scaledWidth - 2, scaledHeight - 2);
 
 		// Shine
 		this.context.fillStyle = blockColour.shine;
-		this.context.fillRect(x + 0.6 * this.blockWidth, y + 0.1 * this.blockHeight, 0.25 * this.blockWidth, 0.25 * this.blockHeight);
+		this.context.fillRect(x + 0.6 * scaledWidth, y + 0.1 * scaledHeight, 0.25 * scaledWidth, 0.25 * scaledHeight);
 	}
 
-	drawBlocks(x, y, blocks, colour) {
+	drawBlocks(x, y, blocks, colour, scale = 1) {
+		var scaledWidth = this.blockWidth * scale;
+		var scaledHeight = this.blockHeight * scale;
+
 		for (var i = 0; i < blocks.length; i++) {
-			this.drawBlock(x + ((blocks[i].colOffset - 1) * this.blockWidth),
-				y + ((blocks[i].rowOffset - 1) * this.blockHeight),
-				colour);
+			this.drawBlock(x + ((blocks[i].colOffset - 1) * scaledWidth),
+				y + ((blocks[i].rowOffset - 1) * scaledHeight),
+				colour, scale);
 		}
 	}
 
@@ -151,21 +157,10 @@ module.exports = class CanvasRenderer {
 		// }
 
 		this.context.restore();
-
-		// Temporary numbering
-		/*this.context.fillStyle = "#ffff00";
-		this.context.font = "10px Arial";
-		this.context.textAlign = "center";
-		this.context.textBaseline = "bottom";
-		for (var j = 0; j < WELL_COLUMNS; j++) {
-		    for (var k = 0; k < WELL_ROWS; k++) {
-		        this.context.fillText(j + ", " + k, x + j * this.blockWidth + (this.blockWidth / 2), y + k * this.blockHeight + (this.blockHeight / 2));
-		    }
-		}*/
 	}
 
 	drawNextBox(tetromino) {
-		var boxHeight = 190;
+		var boxHeight = 145;
 		var boxWidth = 160;
 		var boxLeft = this.width - this.borderPadding - boxWidth - 20;
 		var boxTop = this.borderPadding;
@@ -195,7 +190,9 @@ module.exports = class CanvasRenderer {
 
 		// Piece
 		if (tetromino) {
-			tetromino.draw(this, boxLeft + (boxWidth / 2) + ((4 - tetromino.columns) / 2) * this.blockWidth, boxTop + 20 + (boxHeight / 2) + ((4 - tetromino.rows) / 2) * this.blockHeight);
+			tetromino.draw(this,
+				boxLeft + (boxWidth / 2) + ((4 - tetromino.columns) / 2) * this.blockWidth,
+				boxTop + 100 + ((4 - tetromino.rows) / 2) * this.blockHeight);
 		}
 		// }
 
@@ -203,10 +200,10 @@ module.exports = class CanvasRenderer {
 	}
 
 	drawScoreBox(score, lines) {
-		var boxHeight = 145;
+		var boxHeight = 125;
 		var boxWidth = 160;
 		var boxLeft = this.width - this.borderPadding - boxWidth - 20;
-		var boxTop = this.borderPadding + 220;
+		var boxTop = this.borderPadding + 175;
 
 		// Border
 		this.context.strokeStyle = this.borderColour;
@@ -230,28 +227,84 @@ module.exports = class CanvasRenderer {
 		this.context.textAlign = "left";
 		this.context.textBaseline = "top";
 		this.context.fillText("SCORE", boxLeft + this.borderPadding, boxTop + this.borderPadding);
-		this.context.font = "bold 26px Consolas";
+		this.context.font = "bold 22px Consolas";
 		this.context.textAlign = "right";
 		this.context.textBaseline = "middle";
-		this.context.fillText(score, boxLeft + boxWidth - this.borderPadding, boxTop + this.borderPadding + 45);
+		this.context.fillText(score, boxLeft + boxWidth - this.borderPadding, boxTop + this.borderPadding + 40);
 
 		// Lines
 		this.context.font = "bold 22px Arial";
 		this.context.fillStyle = this.textColour;
 		this.context.textAlign = "left";
 		this.context.textBaseline = "top";
-		this.context.fillText("LINES", boxLeft + this.borderPadding, boxTop + this.borderPadding + 65);
-		this.context.font = "bold 26px Consolas";
+		this.context.fillText("LINES", boxLeft + this.borderPadding, boxTop + this.borderPadding + 55);
+		this.context.font = "bold 22px Consolas";
 		this.context.textAlign = "right";
 		this.context.textBaseline = "middle";
-		this.context.fillText(lines, boxLeft + boxWidth - this.borderPadding, boxTop + this.borderPadding + 110);
+		this.context.fillText(lines, boxLeft + boxWidth - this.borderPadding, boxTop + this.borderPadding + 95);
 		// }
 
 		this.context.restore();
 	}
 
-	drawStats(totals) {
-		// TODO: Draw stats
+	drawStats(totals, templates) {
+		var boxHeight = 250;
+		var boxWidth = 160;
+		var boxLeft = this.width - this.borderPadding - boxWidth - 20;
+		var boxTop = this.borderPadding + 330;
+		var rowHeight = 30; // 250 div 8 = 30 remainder 10
+		var miniScale = 0.3;
+
+		// Border
+		this.context.strokeStyle = this.borderColour;
+		this.context.lineWidth = 2;
+		this.context.strokeRect(boxLeft, boxTop, boxWidth, boxHeight);
+		this.context.save();
+
+		// {
+		// Clip inside of border
+		this.context.beginPath();
+		this.context.rect(boxLeft + 1, boxTop + 1, boxWidth - 2, boxHeight - 2);
+		this.context.clip();
+
+		// Back colour
+		this.context.fillStyle = this.backColour;
+		this.context.fillRect(boxLeft, boxTop, boxWidth, boxHeight);
+
+		var totalRow = 0;
+		for (var key in totals) {
+			if (totals.hasOwnProperty(key)) {
+				// Setup font
+				this.context.font = "bold 22px Consolas";
+				this.context.textBaseline = "top";
+
+				var tetromino = templates[key];
+				if (tetromino) {
+					// Draw mini tetromino
+					tetromino.draw(this,
+						boxLeft + this.borderPadding + 15 + ((4 - tetromino.columns) / 2) * this.blockWidth * miniScale,
+						boxTop + totalRow * rowHeight + 7 + (rowHeight / 2) + ((4 - tetromino.rows) / 2) * this.blockWidth * miniScale,
+						miniScale);
+
+					// Use tetromino colour for total
+					this.context.fillStyle = tetromino.colour.front;
+				} else {
+					// Write total symbol
+					this.context.fillStyle = this.textColour;
+					this.context.textAlign = "left";
+					this.context.fillText("Σ", boxLeft + this.borderPadding + 8, boxTop + totalRow * rowHeight + this.borderPadding);
+				}
+
+				// Write total
+				this.context.textAlign = "right";
+				this.context.fillText(totals[key], boxLeft + boxWidth - this.borderPadding, boxTop + totalRow * rowHeight + this.borderPadding);
+
+				totalRow++;
+			}
+		}
+		// }
+
+		this.context.restore();
 	}
 
 	drawMessageBox(message) {

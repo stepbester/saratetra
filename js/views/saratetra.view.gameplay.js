@@ -67,6 +67,7 @@ module.exports = class GameplayView extends View {
     }
     tick() {
         View.prototype.tick.call(this);
+
         // Check state
         switch (this.well.state) {
             case WellComponents.WellState.PIECE_FALLING:
@@ -115,6 +116,10 @@ module.exports = class GameplayView extends View {
                 }
                 break;
             case WellComponents.WellState.PIECE_STUCK:
+                // Update totals
+                this.stats.totals[this.well.fallingPiece.key] = this.stats.totals[this.well.fallingPiece.key] + 1;
+                this.stats.totals.sum = this.stats.totals.sum + 1;
+
                 // After wait, freeze the stuck piece
                 this.well.freezePiece();
 
