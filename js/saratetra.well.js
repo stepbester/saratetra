@@ -17,9 +17,8 @@ var WellState = Object.freeze({
 	PIECE_STUCK: 2,
 	PENDING_NEXT_PIECE: 3,
 	CLEARING_ROWS: 4,
-	ROWS_CLEARED: 5,
-	GAME_ENDING: 6,
-	GAME_OVER: 7
+	GAME_ENDING: 5,
+	GAME_OVER: 6
 });
 
 /**
@@ -167,7 +166,6 @@ class Well {
 		this.rowsToClear = [];
 
 		// Register that the rows have been cleared
-		//this.state = WellState.ROWS_CLEARED;
 		this.state = WellState.PENDING_NEXT_PIECE;
 	}
 	// insertPiece(): Drop a new tetromino into the well.

@@ -15,7 +15,8 @@ module.exports = class GameplayView extends View {
         this.onGameOver = null;
         this.onPause = null;
         this.blockInput = true;
-        this.fallSpeedPerLevel = 1;
+        this.fallSpeedPerLevel = 2;
+        this.rowsPerLevel = 10;
         this.background = new Image();
         this.background.src = "img/earth.jpg";
         this.generator = new Tetrominoes.Generator();
@@ -29,7 +30,7 @@ module.exports = class GameplayView extends View {
     }
     setLevel(value) {
         this.level = value;
-        this.levelBox.leve = value;
+        this.levelBox.level = value;
     }
     setScore(value) {
         this.score = value;
@@ -110,6 +111,7 @@ module.exports = class GameplayView extends View {
                     // Do not apply gravity while the player is forcing the piece down
                     if (!down) {
                         this.well.applyGravity();
+
                         // Gravity wait varies by level
                         this.waitTime = this.getLevelFallTime();
                     }
@@ -191,10 +193,10 @@ module.exports = class GameplayView extends View {
                 } else {
                     // Adjust blocks for missing rows
                     this.well.collapseDebris();
+
+                    // Update level
+                    this.setLevel(1 + Math.floor(this.lines / this.rowsPerLevel));
                 }
-                break;
-            case WellComponents.WellState.ROWS_CLEARED:
-                // TODO: Nothing?
                 break;
         }
     }
