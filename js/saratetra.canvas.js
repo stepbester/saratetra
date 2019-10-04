@@ -5,10 +5,11 @@ var WellState = require("./saratetra.well.js").WellState;
  * Saratetra canvas renderer.
  */
 module.exports = class CanvasRenderer {
-	constructor(canvas, screenWidth, screenHeight) {
+	constructor(canvas, screenWidth, screenHeight, imageCache) {
 		this.context = canvas.getContext("2d");
 		this.width = screenWidth;
 		this.height = screenHeight;
+		this.imageCache = imageCache;
 
 		// Derived sizes
 		this.blockWidth = 29 / 800 * screenWidth;
@@ -27,7 +28,25 @@ module.exports = class CanvasRenderer {
 		this.context.fillRect(0, 0, this.width, this.height);
 	}
 
-	drawBackground(image) {
+	drawProgress(step, total) {
+		this.context.fillStyle = this.textColour;
+		this.context.textAlign = "center";
+		this.context.font = "bold 20px Arial";
+		this.context.textBaseline = "middle";
+		this.context.fillText("loading...", this.width / 2, this.height / 2);
+	}
+
+	drawBackground(key) {
+		if (!this.imageCache.isFullyLoaded()) {
+			return;
+		}
+
+		var image = this.imageCache.images[key];
+		if (!image)
+		{
+			return;
+		}
+
 		this.context.drawImage(image, 0, 0, this.width, this.height);
 	}
 

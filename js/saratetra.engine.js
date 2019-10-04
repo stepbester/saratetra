@@ -5,13 +5,20 @@ var PauseView = require("./views/saratetra.view.pause.js");
 var UserFunctions = require("./saratetra.input.js").UserFunctions;
 var KeyMappings = require("./saratetra.input.js").KeyMappings;
 
+var EngineStates = Object.freeze({
+	LOADING: 0,
+	RUNNING: 1,
+});
+
 /**
  * Saratetra game class.
  */
 module.exports = class TetraEngine {
-	constructor(renderer, timingOptions = {}) {
+	constructor(renderer, imageCache, timingOptions = {}) {
 		this.renderer = renderer;
+		this.imageCache = imageCache;
 		this.views = [];
+		this.state = EngineStates.LOADING;
 
 		// Set timing options
 		this.rps = timingOptions.refreshPerSecond || 20; // The number of times the engine state is updated per second
@@ -38,7 +45,6 @@ module.exports = class TetraEngine {
 		}, 1000 / this.rps);
 
 		// Start by drawing the first view
-		this.startGame();
 		this.draw();
 	}
 	startGame() {
@@ -79,6 +85,14 @@ module.exports = class TetraEngine {
 		this.views.splice(index, 1);
 	}
 	tick() {
+		if (this.state == EngineStates.LOADING) {
+			// Wait until image cache is ready
+			if (this.imageCache.isFullyLoaded()) {
+				this.startGame();
+				this.state = EngineStates.RUNNING;
+			}
+		}
+
 		// Process views from the top down until one of them blocks processing
 		for (var i = this.views.length - 1; i >= 0; i--) {
 			var currentView = this.views[i];
@@ -93,6 +107,14 @@ module.exports = class TetraEngine {
 	draw() {
 		// Clear canvas
 		this.renderer.clearScreen();
+
+		if (this.state == EngineStates.LOADING) {
+			// Draw progress
+			this.renderer.drawProgress(this.imageCache.totalLoaded, this.imageCache.totalImages);
+
+			// Don't draw anything else until images have loaded
+			return;
+		}
 
 		// Find the first view that blocks draw
 		var start = 0;

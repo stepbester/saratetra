@@ -13,8 +13,6 @@ module.exports = class TitleView extends View {
         this.controller = new TitleController(engine);
         this.onStartGame = null;
         this.noticeVisible = false;
-        this.background = new Image();
-        this.background.src = "img/stars.jpg";
         this.logo = new Array(23);
         for (var i = 0; i < 23; i++) {
             this.logo[i] = new Array(13);
@@ -151,7 +149,7 @@ module.exports = class TitleView extends View {
         }
     }
     draw(renderer) {
-        renderer.drawBackground(this.background);
+        renderer.drawBackground("title");
         renderer.drawTitle(this.logo, this.noticeVisible);
     }
 }

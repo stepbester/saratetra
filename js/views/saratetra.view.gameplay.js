@@ -17,8 +17,6 @@ module.exports = class GameplayView extends View {
         this.blockInput = true;
         this.fallSpeedPerLevel = 2;
         this.rowsPerLevel = 10;
-        this.background = new Image();
-        this.background.src = "img/earth.jpg";
         this.generator = new Tetrominoes.Generator();
         this.waitTime = 0;
         this.well = new WellComponents.Well();
@@ -54,7 +52,11 @@ module.exports = class GameplayView extends View {
     }
     draw(renderer) {
         // Draw background
-        renderer.drawBackground(this.background);
+        var backgroundKey = "lv10";
+        if (this.level < 10) {
+            backgroundKey = "lv0" + this.level;
+        }
+        renderer.drawBackground(backgroundKey);
 
         // Draw components
         this.levelBox.draw(renderer);
