@@ -1,4 +1,4 @@
-const Tetrominoes = require("../saratetra.tetrominoes.js");
+var Tetrominoes = require("../saratetra.tetrominoes.js");
 
 test("rotatable tetromino 'I' has 4 orientations", () => {
     var i = new Tetrominoes.I();
