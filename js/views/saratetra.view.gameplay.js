@@ -1,5 +1,5 @@
 var View = require("../saratetra.view.js");
-var GameplayController = require("../controllers/saratetra.controller.gameplay.js");
+var Action = require("../saratetra.controller.js").Action;
 var UserFunctions = require("../saratetra.input.js").UserFunctions;
 var Tetrominoes = require("../saratetra.tetrominoes.js");
 var WellComponents = require("../saratetra.well.js");
@@ -11,7 +11,6 @@ var HudComponents = require("../saratetra.hud.js");
 module.exports = class GameplayView extends View {
     constructor(engine) {
         super(engine);
-        this.controller = new GameplayController(engine);
         this.onGameOver = null;
         this.onPause = null;
         this.blockInput = true;
@@ -25,6 +24,28 @@ module.exports = class GameplayView extends View {
         this.nextBox = new HudComponents.NextBox();
         this.stats = new HudComponents.Stats();
         this.reset();
+    }
+    defineActions() {
+        var actions = [];
+        
+        // Move the falling piece left
+        actions[UserFunctions.LEFT] = new Action(true);
+        actions[UserFunctions.LEFT].repeatWait = this.engine.moveRate;
+
+        // Rotate the falling piece
+        actions[UserFunctions.UP] = new Action(false);
+
+        // Rotate the falling piece right
+        actions[UserFunctions.RIGHT] = new Action(true);
+        actions[UserFunctions.RIGHT].repeatWait = this.engine.moveRate;
+
+        // Force the falling piece lower
+        actions[UserFunctions.DOWN] = new Action(true);
+
+        // Pause the game
+        actions[UserFunctions.PAUSE] = new Action(false);
+
+        return actions;
     }
     setLevel(value) {
         this.level = value;

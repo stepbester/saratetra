@@ -23,9 +23,8 @@ class Action {
  * Saratetra controller base class.
  */
 class Controller {
-	constructor(engine) {
-		this.engine = engine;
-		this.actions = [];
+	constructor(actions) {
+		this.actions = actions;
 	}
 	// startAction(): Schedule an action for execution.
 	startAction(userFunction) {
@@ -59,6 +58,7 @@ class Controller {
 			if (action.repeatable && (action.waitTime > 0)) {
 				// Decrement waiting time
 				action.waitTime--;
+
 				// Do not execute, because we're waiting
 				return false;
 			}

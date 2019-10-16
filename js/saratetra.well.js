@@ -78,6 +78,7 @@ class Well {
 				this.state = WellState.PIECE_STUCK;
 				return;
 			}
+
 			// No collision, so lower piece
 			this.dropPiece();
 		}
@@ -123,6 +124,7 @@ class Well {
 				this.rowsToClear.push(row);
 			}
 		}
+		
 		// Register that rows are being cleared
 		if (this.rowsToClear.length > 0) {
 			this.state = WellState.CLEARING_ROWS;

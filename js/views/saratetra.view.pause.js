@@ -1,5 +1,5 @@
 var View = require("../saratetra.view.js");
-var PauseController = require("../controllers/saratetra.controller.pause.js");
+var Action = require("../saratetra.controller.js").Action;
 var UserFunctions = require("../saratetra.input.js").UserFunctions;
 
 /**
@@ -8,9 +8,13 @@ var UserFunctions = require("../saratetra.input.js").UserFunctions;
 module.exports = class PauseView extends View {
 	constructor(engine) {
 		super(engine);
-		this.controller = new PauseController(engine);
 		this.blockInput = true;
 		this.blockDraw = false;
+	}
+	defineActions() {
+		var actions = [];
+		actions[UserFunctions.PAUSE] = new Action(false);
+		return actions;
 	}
 	tick() {
 		View.prototype.tick.call(this);

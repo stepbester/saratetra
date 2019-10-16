@@ -1,6 +1,6 @@
 var View = require("../saratetra.view.js");
 var Colours = require("../saratetra.blockColours.js").Colours;
-var TitleController = require("../controllers/saratetra.controller.title.js");
+var Action = require("../saratetra.controller.js").Action;
 var UserFunctions = require("../saratetra.input.js").UserFunctions;
 
 /**
@@ -10,7 +10,6 @@ module.exports = class TitleView extends View {
     constructor(engine, flashRate) {
         super(engine);
         this.flashRate = flashRate;
-        this.controller = new TitleController(engine);
         this.onStartGame = null;
         this.noticeVisible = false;
         this.logo = new Array(23);
@@ -132,6 +131,11 @@ module.exports = class TitleView extends View {
         this.logo[22][11] = Colours.Orange;
         this.logo[20][12] = Colours.Orange;
         this.logo[22][12] = Colours.Orange;
+    }
+    defineActions() {
+        var actions = [];
+        actions[UserFunctions.SELECT] = new Action(false);
+        return actions;
     }
     tick() {
         View.prototype.tick.call(this);
