@@ -4,7 +4,8 @@
   "description": "A JavaScript tetris clone",
   "main": "saratetra.js",
   "scripts": {
-    "build": "browserify main.js -o deploy/saratetra.js"
+    "build": "browserify main.js -o deploy/saratetra.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -19,5 +20,8 @@
     "url": "https://github.com/stepbester/saratetra/issues"
   },
   "homepage": "https://github.com/stepbester/saratetra#readme",
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^24.9.0"
+  }
 }
