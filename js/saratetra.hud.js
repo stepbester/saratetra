@@ -1,4 +1,4 @@
-var Tetrominoes = require("./saratetra.tetrominoes.js");
+var Tetrominoes = require("./saratetra.tetromino.js");
 
 /**
  * Saratetra status box class.

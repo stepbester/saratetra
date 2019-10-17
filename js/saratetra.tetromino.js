@@ -756,51 +756,6 @@ class Z extends Tetromino {
 	}
 }
 
-/**
- * Saratetra tetromino generator class.
- */
-class TetrominoGenerator {
-	constructor() {
-		this.nextPiece = this.generatePiece();
-	}
-	generatePiece() {
-		var luckyNumber = Math.floor(Math.random() * 7);
-		var newPiece = null;
-		switch (luckyNumber) {
-			case 0:
-				newPiece = new I();
-				break;
-			case 1:
-				newPiece = new O();
-				break;
-			case 2:
-				newPiece = new T();
-				break;
-			case 3:
-				newPiece = new J();
-				break;
-			case 4:
-				newPiece = new L();
-				break;
-			case 5:
-				newPiece = new S();
-				break;
-			case 6:
-				newPiece = new Z();
-				break;
-		}
-		return newPiece;
-	}
-	peek() {
-		return this.nextPiece;
-	}
-	pop() {
-		var returnPiece = this.nextPiece;
-		this.nextPiece = this.generatePiece();
-		return returnPiece;
-	}
-}
-
 module.exports = {
 	I: I,
 	O: O,
@@ -808,6 +763,5 @@ module.exports = {
 	J: J,
 	L: L,
 	S: S,
-	Z: Z,
-	Generator: TetrominoGenerator
+	Z: Z
 };

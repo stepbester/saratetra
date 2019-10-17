@@ -1,7 +1,7 @@
 var View = require("../saratetra.view.js");
 var Action = require("../saratetra.controller.js").Action;
 var UserFunctions = require("../saratetra.input.js").UserFunctions;
-var Tetrominoes = require("../saratetra.tetrominoes.js");
+var TetrominoGenerator = require("../saratetra.generator");
 var WellComponents = require("../saratetra.well.js");
 var HudComponents = require("../saratetra.hud.js");
 
@@ -16,7 +16,7 @@ module.exports = class GameplayView extends View {
         this.blockInput = true;
         this.fallSpeedPerLevel = 2;
         this.rowsPerLevel = 10;
-        this.generator = new Tetrominoes.Generator();
+        this.generator = new TetrominoGenerator();
         this.waitTime = 0;
         this.well = new WellComponents.Well();
         this.levelBox = new HudComponents.LevelBox();
