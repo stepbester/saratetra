@@ -9,15 +9,19 @@ var HudComponents = require("../saratetra.hud.js");
  * Saratetra gameplay view class.
  */
 module.exports = class GameplayView extends View {
-    constructor(engine) {
-        super(engine);
+    constructor(onClose, options) {
+        super(onClose, options);
+        this.fallRate = options.fallRate;
+        this.clearRate = options.clearRate;
+
         this.onGameOver = null;
         this.onPause = null;
         this.blockInput = true;
         this.fallSpeedPerLevel = 2;
         this.rowsPerLevel = 10;
-        this.generator = new TetrominoGenerator();
         this.waitTime = 0;
+
+        this.generator = new TetrominoGenerator();
         this.well = new WellComponents.Well();
         this.levelBox = new HudComponents.LevelBox();
         this.scoreBox = new HudComponents.ScoreBox();
@@ -25,19 +29,19 @@ module.exports = class GameplayView extends View {
         this.stats = new HudComponents.Stats();
         this.reset();
     }
-    defineActions() {
+    defineActions(options) {
         var actions = [];
         
         // Move the falling piece left
         actions[UserFunctions.LEFT] = new Action(true);
-        actions[UserFunctions.LEFT].repeatWait = this.engine.moveRate;
+        actions[UserFunctions.LEFT].repeatWait = options.moveRate;
 
         // Rotate the falling piece
         actions[UserFunctions.UP] = new Action(false);
 
         // Rotate the falling piece right
         actions[UserFunctions.RIGHT] = new Action(true);
-        actions[UserFunctions.RIGHT].repeatWait = this.engine.moveRate;
+        actions[UserFunctions.RIGHT].repeatWait = options.moveRate;
 
         // Force the falling piece lower
         actions[UserFunctions.DOWN] = new Action(true);
@@ -87,7 +91,7 @@ module.exports = class GameplayView extends View {
         this.stats.draw(renderer);
     }
     getLevelFallTime() {
-        return this.engine.fallRate - (this.level * this.fallSpeedPerLevel);
+        return this.fallRate - (this.level * this.fallSpeedPerLevel);
     }
     tick() {
         View.prototype.tick.call(this);
@@ -153,7 +157,7 @@ module.exports = class GameplayView extends View {
                 var clearedRows = this.well.getClearRowCount();
                 if (clearedRows > 0) {
                     // Clearing rows introduce a pause for the player to see what is happening
-                    this.waitTime = this.engine.clearRate;
+                    this.waitTime = this.clearRate;
 
                     // Update lines
                     this.setLines(this.lines + clearedRows);

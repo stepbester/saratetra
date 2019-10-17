@@ -6,12 +6,12 @@ var UserFunctions = require("../saratetra.input.js").UserFunctions;
  * Saratetra game over view class.
  */
 module.exports = class GameOverView extends View {
-	constructor(engine) {
-		super(engine);
+	constructor(onClose) {
+		super(onClose);
 		this.blockInput = true;
 		this.blockDraw = false;
 	}
-	defineActions() {
+	defineActions(options) {
 		var actions = [];
         actions[UserFunctions.ANY] = new Action(false);
 		return actions;

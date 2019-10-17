@@ -50,25 +50,39 @@ module.exports = class TetraEngine {
 	startGame() {
 		var engine = this; // this hack
 
-		var titleView = new TitleView(this, this.flashRate);
+		// Standard close
+		var viewClose = function (view) {
+			engine.closeView(view);
+		};
+
+		// Show the title view first
+		var titleView = new TitleView(viewClose, {
+			flashRate: engine.flashRate
+		});
+
+		// Start a new game with the gameplay view
 		titleView.onStartGame = function () {
-			var gameplayView = new GameplayView(engine);
+			var gameplayView = new GameplayView(viewClose, {
+				moveRate: engine.moveRate,
+				fallRate: engine.fallRate,
+				clearRate: engine.clearRate
+			});
 
+			// When the game is over, show the game over view
 			gameplayView.onGameOver = function () {
-				var gameOver = new GameOverView(engine);
+				var gameOverClose = function () {
+					engine.closeView(this);
 
-				// When game over view is closed, return to title
-				gameOver.onClose = function () {
+					// When game over view is closed, return to title
 					gameplayView.close();
-				};
-
-				// Display game over message
+				}
+				var gameOver = new GameOverView(gameOverClose);
 				engine.openView(gameOver);
 			};
 
+			// Display pause message
 			gameplayView.onPause = function () {
-				// Display pause message
-				engine.openView(new PauseView(engine));
+				engine.openView(new PauseView(viewClose));
 			};
 
 			// Go to gameplay view

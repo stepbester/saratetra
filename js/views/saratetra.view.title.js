@@ -7,9 +7,9 @@ var UserFunctions = require("../saratetra.input.js").UserFunctions;
  * Saratetra title view class.
  */
 module.exports = class TitleView extends View {
-    constructor(engine, flashRate) {
-        super(engine);
-        this.flashRate = flashRate;
+    constructor(onClose, options) {
+        super(onClose);
+        this.flashRate = options.flashRate;
         this.onStartGame = null;
         this.noticeVisible = false;
         this.logo = new Array(23);
