@@ -10,6 +10,13 @@ module.exports = class GameOverView extends View {
 		super(onClose);
 		this.blockInput = true;
 		this.blockDraw = false;
+
+		// Actions
+        var view = this; // this hack
+        this.controller.defineAction(UserFunctions.ANY, new Action(function() {
+			// Close this view
+            view.close();
+        }));
 	}
 	defineActions(options) {
 		var actions = [];
@@ -18,12 +25,6 @@ module.exports = class GameOverView extends View {
 	}
 	tick() {
 		View.prototype.tick.call(this);
-
-		// Process actions
-		if (this.controller.executeAction(UserFunctions.ANY)) {
-			// Close this view
-			this.close();
-		}
 	}
 	draw(renderer) {
 		renderer.drawMessageBox("GAME OVER");

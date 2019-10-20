@@ -20,6 +20,7 @@ module.exports = class GameplayView extends View {
         this.fallSpeedPerLevel = 2;
         this.rowsPerLevel = 10;
         this.waitTime = 0;
+        this.gravityActive = true;
 
         this.generator = new TetrominoGenerator();
         this.well = new WellComponents.Well();
@@ -28,28 +29,41 @@ module.exports = class GameplayView extends View {
         this.nextBox = new HudComponents.NextBox();
         this.stats = new HudComponents.Stats();
         this.reset();
-    }
-    defineActions(options) {
-        var actions = [];
-        
-        // Move the falling piece left
-        actions[UserFunctions.LEFT] = new Action(true);
-        actions[UserFunctions.LEFT].repeatWait = options.moveRate;
 
-        // Rotate the falling piece
-        actions[UserFunctions.UP] = new Action(false);
+        // Actions
+        var view = this; // this hack
+        this.controller.defineAction(UserFunctions.LEFT, new Action(() => {
+            // Move the falling piece left
+            view.well.steerPieceLeft();
+        }, true, options.moveRate));
 
-        // Rotate the falling piece right
-        actions[UserFunctions.RIGHT] = new Action(true);
-        actions[UserFunctions.RIGHT].repeatWait = options.moveRate;
+        this.controller.defineAction(UserFunctions.RIGHT, new Action(() => {
+            // Move the falling piece right
+            view.well.steerPieceRight();
+        }, true, options.moveRate));
 
-        // Force the falling piece lower
-        actions[UserFunctions.DOWN] = new Action(true);
+        this.controller.defineAction(UserFunctions.UP, new Action(() => {
+            // Rotate the falling piece
+            view.well.rotatePiece();
+        }));
 
-        // Pause the game
-        actions[UserFunctions.PAUSE] = new Action(false);
+        this.controller.defineAction(UserFunctions.DOWN, new Action(() => {
+            // Force the falling piece lower
+            view.well.dropPiece();
+        }, true));
 
-        return actions;
+        this.controller.defineAction(UserFunctions.PAUSE, new Action(() => {
+            // Pause the game
+            if (view.onPause) {
+                view.onPause();
+            }
+
+            // Cancel all actions so keys don't get "stuck"
+            view.controller.cancelActions();
+            return;
+        }));
+
+        this.controller.defineMutex([UserFunctions.LEFT, UserFunctions.RIGHT]);
     }
     setLevel(value) {
         this.level = value;
@@ -99,44 +113,12 @@ module.exports = class GameplayView extends View {
         // Check state
         switch (this.well.state) {
             case WellComponents.WellState.PIECE_FALLING:
-                // Pause
-                if (this.controller.executeAction(UserFunctions.PAUSE)) {
-                    if (this.onPause) {
-                        this.onPause();
-                    }
-
-                    // Cancel all actions so keys don't get "stuck"
-                    this.controller.cancelActions();
-                    return;
-                }
-
-                // Get actions
-                var left = this.controller.executeAction(UserFunctions.LEFT);
-                var right = this.controller.executeAction(UserFunctions.RIGHT);
-                var up = this.controller.executeAction(UserFunctions.UP);
-                var down = this.controller.executeAction(UserFunctions.DOWN);
-
-                // Process actions
-                if ((!left) != (!right)) { // XOR
-                    if (left) {
-                        this.well.steerPieceLeft();
-                    } else if (right) {
-                        this.well.steerPieceRight();
-                    }
-                }
-
-                if (up) {
-                    this.well.rotatePiece();
-                } else if (down) {
-                    this.well.dropPiece();
-                }
-
                 if (this.waitTime > 0) {
                     // Perform waiting
                     this.waitTime--;
                 } else {
-                    // Do not apply gravity while the player is forcing the piece down
-                    if (!down) {
+                    // TODO: Do not apply gravity while the player is forcing the piece down
+                    if (this.gravityActive) {
                         this.well.applyGravity();
 
                         // Gravity wait varies by level

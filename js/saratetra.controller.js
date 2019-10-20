@@ -11,11 +11,22 @@ var ActionStatus = {
  * Saratetra controller action class.
  */
 class Action {
-	constructor(repeatable) {
+	constructor(onExecute, repeatable = false, repeatWait = 0) {
+		this.onExecute = onExecute;
+		this.onRelease = null;
 		this.status = ActionStatus.NOT_SCHEDULED;
 		this.repeatable = repeatable;
-		this.repeatWait = 0;
+		this.repeatWait = repeatWait;
 		this.waitTime = 0;
+	}
+}
+
+/**
+ * Mutually exclusive relationship between user functions.
+ */
+class MutexRelationship {
+	constructor(userFunctions) {
+		this.userFunctions = userFunctions;
 	}
 }
 
@@ -23,26 +34,71 @@ class Action {
  * Saratetra controller base class.
  */
 class Controller {
-	constructor(actions) {
-		this.actions = actions;
+	constructor() {
+		this.actions = [];
+		this.mutexes = [];
 	}
-	// startAction(): Schedule an action for execution.
+	defineAction(userFunction, action) {
+		this.actions[userFunction] = action;
+	}
+	// Define a mutually exclusive relationship
+	defineMutex(userFunctions) {
+		this.mutexes.push(new MutexRelationship(userFunctions));
+	}
+	// Schedule an action for execution
 	startAction(userFunction) {
 		var action = this.actions[userFunction];
+
+		if (!action) {
+			return;
+		}
+
+		if (action.status != ActionStatus.NOT_SCHEDULED) {
+			return;
+		}
+
+		// Check for mutual exclusivity
+		for (var i = 0; i < this.mutexes.length; i++) {
+			var mutexRelationship = this.mutexes[i];
+
+			// Skip over mutexes that don't apply
+			if (!this.mutexes[i].userFunctions.includes(userFunction)) {
+				continue;
+			}
+
+			for (var j = 0; j < mutexRelationship.userFunctions.length; j++) {
+				var func = mutexRelationship.userFunctions[j];
+
+				// Skip the requested function itself
+				if (func == userFunction) {
+					continue;
+				}
+
+				var mutexAction = this.actions[func];
+				if (mutexAction && mutexAction.status == ActionStatus.SCHEDULED) {
+					// Clash with a mutually exclusive action, so release all buttons
+					this.cancelActions();
+					return;
+				}
+			}
+		}
+
+		// Schedule the action
+		action.status = ActionStatus.SCHEDULED;
+	}
+	// Terminate a scheduled action
+	endAction(userFunction) {
+		var action = this.actions[userFunction];
+
 		if (action) {
-			if (action.status == ActionStatus.NOT_SCHEDULED) {
-				action.status = ActionStatus.SCHEDULED;
+			action.status = ActionStatus.NOT_SCHEDULED;
+
+			if (action.onRelease) {
+				action.onRelease();
 			}
 		}
 	}
-	// endAction(): Terminate a scheduled action.
-	endAction(userFunction) {
-		var action = this.actions[userFunction];
-		if (action) {
-			action.status = ActionStatus.NOT_SCHEDULED;
-		}
-	}
-	// cancelActions(): Cancel all actions.
+	// Cancel all actions.
 	cancelActions() {
 		for (var key in this.actions) {
 			if (this.actions.hasOwnProperty(key)) {
@@ -50,28 +106,37 @@ class Controller {
 			}
 		}
 	}
-	// executeAction(): Return whether an action is scheduled, and set to executed if so, assuming that the view will take care of it.
-	executeAction(userFunction) {
-		var action = this.actions[userFunction];
-		var executeAction = action.status == ActionStatus.SCHEDULED;
-		if (executeAction) {
-			if (action.repeatable && (action.waitTime > 0)) {
-				// Decrement waiting time
-				action.waitTime--;
+	executeActions() {
+		// Perform callbacks for every scheduled action
+		for (var key in this.actions) {
+			if (this.actions.hasOwnProperty(key)) {
+				var action = this.actions[key];
 
-				// Do not execute, because we're waiting
-				return false;
-			}
-			// Repeat if possible
-			if (action.repeatable) {
-				// Leave scheduled
-				action.waitTime = action.repeatWait;
-			} else {
-				// Flag as executed so that it does not run again
-				action.status = ActionStatus.EXECUTED;
+				if (action.status == ActionStatus.SCHEDULED) {
+					// Is action waiting to repeat?
+					if (action.repeatable && action.waitTime > 0) {
+						// Decrement waiting time
+						action.waitTime--;
+
+						// Do not execute, because we're waiting
+						continue;
+					}
+
+					// Trigger callback
+					if (action.onExecute) {
+						action.onExecute();
+					}
+
+					if (action.repeatable) {
+						// Leave scheduled
+						action.waitTime = action.repeatWait;
+					} else {
+						// Instant action has been executed and must first be released
+						action.status = ActionStatus.EXECUTED;
+					}
+				}
 			}
 		}
-		return executeAction;
 	}
 }
 

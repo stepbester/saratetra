@@ -12,6 +12,15 @@ module.exports = class TitleView extends View {
         this.flashRate = options.flashRate;
         this.onStartGame = null;
         this.noticeVisible = false;
+
+        // Actions
+        var view = this; // this hack
+        this.controller.defineAction(UserFunctions.SELECT, new Action(function() {
+            if (view.onStartGame) {
+                view.onStartGame();
+            }
+        }));
+
         this.logo = new Array(23);
         for (var i = 0; i < 23; i++) {
             this.logo[i] = new Array(13);
@@ -132,24 +141,12 @@ module.exports = class TitleView extends View {
         this.logo[20][12] = Colours.Orange;
         this.logo[22][12] = Colours.Orange;
     }
-    defineActions() {
-        var actions = [];
-        actions[UserFunctions.SELECT] = new Action(false);
-        return actions;
-    }
     tick() {
         View.prototype.tick.call(this);
 
         // Flash notice
         if (this.time % this.flashRate == 0) {
             this.noticeVisible = !this.noticeVisible;
-        }
-        
-        // Process actions
-        if (this.controller.executeAction(UserFunctions.SELECT)) {
-            if (this.onStartGame) {
-                this.onStartGame();
-            }
         }
     }
     draw(renderer) {

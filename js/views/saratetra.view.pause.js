@@ -10,20 +10,16 @@ module.exports = class PauseView extends View {
 		super(onClose);
 		this.blockInput = true;
 		this.blockDraw = false;
-	}
-	defineActions(options) {
-		var actions = [];
-		actions[UserFunctions.PAUSE] = new Action(false);
-		return actions;
+
+		// Actions
+        var view = this; // this hack
+        this.controller.defineAction(UserFunctions.PAUSE, new Action(function() {
+			// Close this view
+            view.close();
+        }));
 	}
 	tick() {
 		View.prototype.tick.call(this);
-
-		// Process actions
-		if (this.controller.executeAction(UserFunctions.PAUSE)) {
-			// Close this view
-			this.close();
-		}
 	}
 	draw(renderer) {
 		renderer.drawMessageBox("PAUSE");

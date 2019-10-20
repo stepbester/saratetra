@@ -6,17 +6,15 @@ var Controller = require("./saratetra.controller.js").Controller;
 module.exports = class View {
 	constructor(onClose, options = null) {
 		this.onClose = onClose;
-		this.controller = new Controller(this.defineActions(options));
+		this.controller = new Controller();
 		this.time = 0;
 		this.blockDraw = true;
 		this.blockTick = true;
 		this.blockInput = true;
 	}
-	defineActions(options) {
-		return [];
-	}
 	tick() {
 		this.time++;
+		this.controller.executeActions();
 	}
 	draw(renderer) {
 		// ...

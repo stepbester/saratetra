@@ -175,7 +175,7 @@ module.exports = class TetraEngine {
 
 				// Feed user function to controller
 				currentView.controller.endAction(userFunction);
-				currentView.controller.startAction(UserFunctions.ANY);
+				currentView.controller.endAction(UserFunctions.ANY);
 				if (currentView.blockInput) {
 					break;
 				}
