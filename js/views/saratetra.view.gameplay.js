@@ -47,10 +47,17 @@ module.exports = class GameplayView extends View {
             view.well.rotatePiece();
         }));
 
-        this.controller.defineAction(UserFunctions.DOWN, new Action(() => {
+        var dropAction = new Action(() => {
+            // Disable gravity
+            view.gravityActive = false;
+
             // Force the falling piece lower
             view.well.dropPiece();
-        }, true));
+        }, true);
+        dropAction.onRelease = () => {
+            view.gravityActive = true;
+        };
+        this.controller.defineAction(UserFunctions.DOWN, dropAction);
 
         this.controller.defineAction(UserFunctions.PAUSE, new Action(() => {
             // Pause the game
@@ -60,6 +67,9 @@ module.exports = class GameplayView extends View {
 
             // Cancel all actions so keys don't get "stuck"
             view.controller.cancelActions();
+
+            // Make sure gravity is on!
+            view.gravityActive = true;
             return;
         }));
 
@@ -117,7 +127,6 @@ module.exports = class GameplayView extends View {
                     // Perform waiting
                     this.waitTime--;
                 } else {
-                    // TODO: Do not apply gravity while the player is forcing the piece down
                     if (this.gravityActive) {
                         this.well.applyGravity();
 

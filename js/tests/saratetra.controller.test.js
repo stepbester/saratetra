@@ -183,3 +183,28 @@ test("when all actions are ended, none are triggered", () => {
     expect(triggered1).toBe(false);
     expect(triggered2).toBe(false);
 });
+
+test("when an action ends, its on-release event is triggered", () => {
+    var executed = false;
+    var released = false;
+
+    var action = new Controllers.Action(function() {
+        executed = true;
+    }, true);
+    action.onRelease = function() {
+        released = true;
+        console.log("released");
+    };
+
+    var controller = new Controllers.Controller();
+    controller.defineAction(UserFunctions.UP, action);
+    controller.startAction(UserFunctions.UP);
+    controller.executeActions();
+    
+    expect(executed).toBe(true);
+    expect(released).toBe(false);
+
+    controller.endAction(UserFunctions.UP);
+
+    expect(released).toBe(true);
+});
