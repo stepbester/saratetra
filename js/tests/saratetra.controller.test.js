@@ -64,6 +64,45 @@ test("a non-repeatable action can be retriggered after the action has ended", ()
     expect(triggerCount).toBe(2);
 });
 
+test("a non-repeatable action can be retriggered even when the action has not ended", () => {
+    var triggerCount = 0;
+    var action = new Controllers.Action(function() {
+        triggerCount++;
+    });
+
+    var controller = new Controllers.Controller();
+    controller.defineAction(UserFunctions.UP, action);
+    controller.startAction(UserFunctions.UP);
+    controller.executeActions(); // 1
+    controller.executeActions();
+    controller.executeActions();
+    controller.startAction(UserFunctions.UP);
+    controller.executeActions(); // 2
+    controller.executeActions();
+    controller.startAction(UserFunctions.UP);
+    controller.executeActions(); // 3
+    controller.endAction(UserFunctions.UP);
+    controller.startAction(UserFunctions.UP);
+    controller.executeActions(); // 4
+
+    expect(triggerCount).toBe(4);
+});
+
+test("a repeatable action is executed even if it was ended in the same cycle as it started", () => {
+    var triggered = false;
+    var action = new Controllers.Action(function() {
+        triggered = true;
+    }, true);
+
+    var controller = new Controllers.Controller();
+    controller.defineAction(UserFunctions.PAUSE, action);
+    controller.startAction(UserFunctions.PAUSE);
+    controller.endAction(UserFunctions.PAUSE);
+    controller.executeActions();
+
+    expect(triggered).toBe(true);
+});
+
 test("a repeatable action is triggered once every cycle", () => {
     var triggerCount = 0;
     var action = new Controllers.Action(function() {
@@ -193,7 +232,6 @@ test("when an action ends, its on-release event is triggered", () => {
     }, true);
     action.onRelease = function() {
         released = true;
-        console.log("released");
     };
 
     var controller = new Controllers.Controller();

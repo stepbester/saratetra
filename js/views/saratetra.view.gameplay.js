@@ -60,6 +60,11 @@ module.exports = class GameplayView extends View {
         this.controller.defineAction(UserFunctions.DOWN, dropAction);
 
         this.controller.defineAction(UserFunctions.PAUSE, new Action(() => {
+            // Cannot pause during or after game over animation
+            if (this.well.state == WellComponents.WellState.GAME_ENDING || this.well.state == WellComponents.WellState.GAME_OVER) {
+                return;
+            }
+
             // Pause the game
             if (view.onPause) {
                 view.onPause();
@@ -67,9 +72,6 @@ module.exports = class GameplayView extends View {
 
             // Cancel all actions so keys don't get "stuck"
             view.controller.cancelActions();
-
-            // Make sure gravity is on!
-            view.gravityActive = true;
             return;
         }));
 

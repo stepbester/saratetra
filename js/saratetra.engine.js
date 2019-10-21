@@ -148,7 +148,13 @@ module.exports = class TetraEngine {
 		// Map to user function
 		var userFunction = KeyMappings[event.which];
 		if (userFunction) {
+			// Block default behaviour e.g. scroll on down arrow
 			event.preventDefault();
+
+			// Ignore auto-repeated events
+			if (event.repeat) {
+				return;
+			}
 
 			// Broadcast functions to views until one of them blocks input
 			for (var i = this.views.length - 1; i >= 0; i--) {

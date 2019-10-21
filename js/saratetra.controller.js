@@ -2,9 +2,8 @@
  * Saratetra action status enumeration.
  */
 var ActionStatus = {
-	NOT_SCHEDULED: 1,
-	SCHEDULED: 2,
-	EXECUTED: 3
+	OFF: 1,
+	ON: 2
 }
 
 /**
@@ -13,11 +12,25 @@ var ActionStatus = {
 class Action {
 	constructor(onExecute, repeatable = false, repeatWait = 0) {
 		this.onExecute = onExecute;
+		this.status = ActionStatus.OFF;
+
+		// These fields apply to repeatable actions only
 		this.onRelease = null;
-		this.status = ActionStatus.NOT_SCHEDULED;
 		this.repeatable = repeatable;
-		this.repeatWait = repeatWait;
 		this.waitTime = 0;
+		this.repeatWait = repeatWait;
+
+		// These fields are used to let repeatable actions fire at least once
+		this.executed = false;
+		this.cancelling = false; 
+	}
+	start() {
+		this.status = ActionStatus.ON;
+	}
+	end() {
+		this.status = ActionStatus.OFF;
+		this.executed = false;
+		this.cancelling = false;
 	}
 }
 
@@ -45,15 +58,11 @@ class Controller {
 	defineMutex(userFunctions) {
 		this.mutexes.push(new MutexRelationship(userFunctions));
 	}
-	// Schedule an action for execution
+	// Start an action
 	startAction(userFunction) {
 		var action = this.actions[userFunction];
 
 		if (!action) {
-			return;
-		}
-
-		if (action.status != ActionStatus.NOT_SCHEDULED) {
 			return;
 		}
 
@@ -75,7 +84,7 @@ class Controller {
 				}
 
 				var mutexAction = this.actions[func];
-				if (mutexAction && mutexAction.status == ActionStatus.SCHEDULED) {
+				if (mutexAction && mutexAction.status == ActionStatus.ON) {
 					// Clash with a mutually exclusive action, so release all buttons
 					this.cancelActions();
 					return;
@@ -83,58 +92,103 @@ class Controller {
 			}
 		}
 
-		// Schedule the action
-		action.status = ActionStatus.SCHEDULED;
+		// Start the action
+		action.start();
 	}
-	// Terminate a scheduled action
+	// End an action
 	endAction(userFunction) {
 		var action = this.actions[userFunction];
 
-		if (action) {
-			action.status = ActionStatus.NOT_SCHEDULED;
+		if (!action) {
+			return;
+		}
 
+		// Only repeatable actions are ended manually
+		if (!action.repeatable || action.status == ActionStatus.OFF) {
+			return;
+		}
+
+		if (action.executed) {
+			// Deactivate the action now
+			action.end();
+
+			// Trigger the onRelease event
 			if (action.onRelease) {
 				action.onRelease();
 			}
+		} else {
+			// This action must be executed at least once before deactivation
+			action.cancelling = true;
 		}
 	}
-	// Cancel all actions.
+	// End all actions.
 	cancelActions() {
-		for (var key in this.actions) {
-			if (this.actions.hasOwnProperty(key)) {
-				this.actions[key].status = ActionStatus.NOT_SCHEDULED;
-			}
-		}
-	}
-	executeActions() {
-		// Perform callbacks for every scheduled action
 		for (var key in this.actions) {
 			if (this.actions.hasOwnProperty(key)) {
 				var action = this.actions[key];
 
-				if (action.status == ActionStatus.SCHEDULED) {
-					// Is action waiting to repeat?
-					if (action.repeatable && action.waitTime > 0) {
-						// Decrement waiting time
-						action.waitTime--;
-
-						// Do not execute, because we're waiting
-						continue;
-					}
-
-					// Trigger callback
-					if (action.onExecute) {
-						action.onExecute();
-					}
-
-					if (action.repeatable) {
-						// Leave scheduled
-						action.waitTime = action.repeatWait;
-					} else {
-						// Instant action has been executed and must first be released
-						action.status = ActionStatus.EXECUTED;
-					}
+				// Only cancel actions that are ON
+				if (action.status == ActionStatus.OFF) {
+					continue;
 				}
+
+				// Trigger the onRelease event for repeatable actions
+				if (action.repeatable && action.onRelease) {
+					action.onRelease();
+				}
+
+				// End the action
+				action.end();
+			}
+		}
+	}
+	// Update actions and execute as needed
+	executeActions() {
+		// Check all actions
+		for (var key in this.actions) {
+			if (this.actions.hasOwnProperty(key)) {
+				var action = this.actions[key];
+
+				// Only execute actions that are ON
+				if (action.status != ActionStatus.ON) {
+					continue;
+				}
+
+				if (action.repeatable) {
+					// Repeatable actions continue until ended by EndAction()
+					if (action.waitTime > 0) {
+						// Wait for retrigger
+						action.waitTime--;
+					} else {
+						// Repeatable actions trigger when the wait time is over
+						if (action.onExecute) {
+							action.onExecute();
+						}
+
+						// Action was executed at least once
+						action.executed = true;
+
+						if (action.cancelling) {
+							// This action was ended too quickly, but has now executed and can end safely
+							action.end();
+							continue;
+						}
+
+						// Reset timer for repeat
+						action.waitTime = action.repeatWait;
+					}
+
+					// Done with this repeatable action
+					continue;
+				}
+
+				// Non-repeatable actions always execute
+				if (action.onExecute) {
+					action.onExecute();
+				}
+
+				// Non-repeatable actions end automatically and do not fire onRelease events
+				action.status = ActionStatus.OFF;
 			}
 		}
 	}
