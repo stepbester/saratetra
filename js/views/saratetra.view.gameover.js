@@ -18,11 +18,6 @@ module.exports = class GameOverView extends View {
             view.close();
         }));
 	}
-	defineActions(options) {
-		var actions = [];
-        actions[UserFunctions.ANY] = new Action(false);
-		return actions;
-	}
 	tick() {
 		View.prototype.tick.call(this);
 	}

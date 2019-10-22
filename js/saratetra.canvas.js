@@ -18,6 +18,7 @@ module.exports = class CanvasRenderer {
 
 		// Colours
 		this.textColour = "#ffffff";
+		this.selectedColour = "#ff00ff";
 		this.borderColour = "#ffffff";
 		this.backColour = "#000000";
 		this.rowClearColour = "#ffffff";
@@ -42,8 +43,7 @@ module.exports = class CanvasRenderer {
 		}
 
 		var image = this.imageCache.images[key];
-		if (!image)
-		{
+		if (!image) {
 			return;
 		}
 
@@ -72,15 +72,26 @@ module.exports = class CanvasRenderer {
 		this.context.fillStyle = this.backColour;
 		this.context.fillRect(boxLeft, boxTop, boxWidth, boxHeight);
 
-		// Level
-		this.context.font = "bold 26px Arial";
-		this.context.fillStyle = this.textColour;
-		this.context.textAlign = "center";
-		this.context.textBaseline = "top";
-		this.context.fillText("LEVEL", boxLeft + boxWidth / 2, boxTop + this.borderPadding);
-		this.context.font = "bold 48px Arial";
-		this.context.textBaseline = "middle";
-		this.context.fillText(level, boxLeft + boxWidth / 2, boxTop + this.borderPadding + 65);
+		if (level == 0) {
+			// Endless
+			this.context.font = "bold 26px Arial";
+			this.context.fillStyle = this.textColour;
+			this.context.textAlign = "center";
+			this.context.textBaseline = "middle";
+			this.context.fillText("ENDLESS", boxLeft + boxWidth / 2, boxTop + boxHeight / 4);
+			this.context.font = "bold 42px Arial";
+			this.context.fillText("MODE", boxLeft + boxWidth / 2, boxTop + 75);
+		} else {
+			// Level
+			this.context.font = "bold 26px Arial";
+			this.context.fillStyle = this.textColour;
+			this.context.textAlign = "center";
+			this.context.textBaseline = "top";
+			this.context.fillText("LEVEL", boxLeft + boxWidth / 2, boxTop + this.borderPadding);
+			this.context.font = "bold 48px Arial";
+			this.context.textBaseline = "middle";
+			this.context.fillText(level, boxLeft + boxWidth / 2, boxTop + this.borderPadding + 65);
+		}
 		// }
 
 		this.context.restore();
@@ -397,5 +408,38 @@ module.exports = class CanvasRenderer {
 		// }
 
 		this.context.restore();
+	}
+
+	drawMainMenu(items, index) {
+		// Box borders
+		var boxHeight = 120;
+		var boxWidth = 240;
+		var boxLeft = (this.width - boxWidth) / 2;
+		var boxTop = (this.height - boxHeight) / 2;
+
+		// Outer border
+		this.context.strokeStyle = this.borderColour;
+		this.context.lineWidth = 2;
+		this.context.strokeRect(boxLeft, boxTop, boxWidth, boxHeight);
+
+		// Back colour
+		this.context.fillStyle = this.backColour;
+		this.context.fillRect(boxLeft, boxTop, boxWidth, boxHeight);
+
+		// Menu items
+		this.context.font = "bold 26px Arial";
+		this.context.textAlign = "center";
+		this.context.textBaseline = "middle";
+
+		var itemHeight = boxHeight / items.length;
+		for (var i = 0; i < items.length; i++) {
+			if (i == index) {
+				this.context.fillStyle = this.selectedColour;
+			} else {
+				this.context.fillStyle = this.textColour;
+			}
+
+			this.context.fillText(items[i], boxLeft + boxWidth / 2, boxTop + i * itemHeight + itemHeight / 2);
+		}
 	}
 }

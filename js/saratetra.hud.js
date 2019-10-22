@@ -4,11 +4,16 @@ var Tetrominoes = require("./saratetra.tetromino.js");
  * Saratetra status box class.
  */
 class LevelBox {
-	constructor() {
+	constructor(endless) {
 		this.level = 1;
+		this.endless = endless;
 	}
 	draw(renderer) {
-		renderer.drawLevelBox(this.level);
+		if (this.endless) {
+			renderer.drawLevelBox(0);
+		} else {
+			renderer.drawLevelBox(this.level);
+		}
 	}
 };
 

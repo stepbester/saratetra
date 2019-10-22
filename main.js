@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         new Images.ImageDefinition("lv08", "img/08_galaxy.jpg"),
         new Images.ImageDefinition("lv09", "img/09_flare.jpg"),
         new Images.ImageDefinition("lv10", "img/10_astronaut.jpg"),
+        new Images.ImageDefinition("endless", "img/endless.jpg")
     ];
 
     var cache = new Images.ImageCache(images);

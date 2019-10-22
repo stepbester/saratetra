@@ -1,4 +1,5 @@
 var View = require("../saratetra.view.js");
+var GameModes = require("../saratetra.gameModes.js");
 var Action = require("../saratetra.controller.js").Action;
 var UserFunctions = require("../saratetra.input.js").UserFunctions;
 var TetrominoGenerator = require("../saratetra.generator");
@@ -13,6 +14,7 @@ module.exports = class GameplayView extends View {
         super(onClose, options);
         this.fallRate = options.fallRate;
         this.clearRate = options.clearRate;
+        this.gameMode = options.gameMode;
 
         this.onGameOver = null;
         this.onPause = null;
@@ -24,7 +26,7 @@ module.exports = class GameplayView extends View {
 
         this.generator = new TetrominoGenerator();
         this.well = new WellComponents.Well();
-        this.levelBox = new HudComponents.LevelBox();
+        this.levelBox = new HudComponents.LevelBox(this.gameMode == GameModes.ENDLESS);
         this.scoreBox = new HudComponents.ScoreBox();
         this.nextBox = new HudComponents.NextBox();
         this.stats = new HudComponents.Stats();
@@ -104,8 +106,15 @@ module.exports = class GameplayView extends View {
     draw(renderer) {
         // Draw background
         var backgroundKey = "lv10";
-        if (this.level < 10) {
-            backgroundKey = "lv0" + this.level;
+        switch (this.gameMode) {
+            case GameModes.STANDARD:
+                if (this.level < 10) {
+                    backgroundKey = "lv0" + this.level;
+                }
+                break;
+            case GameModes.ENDLESS:
+                backgroundKey = "endless";
+                break;
         }
         renderer.drawBackground(backgroundKey);
 
@@ -214,8 +223,10 @@ module.exports = class GameplayView extends View {
                     // Adjust blocks for missing rows
                     this.well.collapseDebris();
 
-                    // Update level
-                    this.setLevel(1 + Math.floor(this.lines / this.rowsPerLevel));
+                    if (this.gameMode != GameModes.ENDLESS) {
+                        // Update level
+                        this.setLevel(1 + Math.floor(this.lines / this.rowsPerLevel));
+                    }
                 }
                 break;
         }

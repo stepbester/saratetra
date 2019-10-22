@@ -10,14 +10,17 @@ module.exports = class TitleView extends View {
     constructor(onClose, options) {
         super(onClose);
         this.flashRate = options.flashRate;
-        this.onStartGame = null;
+        this.onContinue = null;
         this.noticeVisible = false;
 
         // Actions
         var view = this; // this hack
         this.controller.defineAction(UserFunctions.SELECT, new Action(function() {
-            if (view.onStartGame) {
-                view.onStartGame();
+            // Hide the message
+            view.noticeVisible = false;
+
+            if (view.onContinue) {
+                view.onContinue();
             }
         }));
 

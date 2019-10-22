@@ -1,7 +1,9 @@
 var TitleView = require("./views/saratetra.view.title.js");
+var MenuView = require("./views/saratetra.view.menu.js");
 var GameplayView = require("./views/saratetra.view.gameplay.js");
 var GameOverView = require("./views/saratetra.view.gameover.js");
 var PauseView = require("./views/saratetra.view.pause.js");
+var GameModes = require("./saratetra.gameModes.js");
 var UserFunctions = require("./saratetra.input.js").UserFunctions;
 var KeyMappings = require("./saratetra.input.js").KeyMappings;
 
@@ -27,8 +29,7 @@ module.exports = class TetraEngine {
 		this.fallRate = timingOptions.fallRate || (this.rps / 1); // The rate at which the player can cause a tetromino to descend
 		this.clearRate = timingOptions.clearRate || (this.rps / 10); // The rate at which cleared rows are removed from the well
 
-		// Hack to get around event handlers losing context of "this"
-		var engine = this;
+		var engine = this; // this hack
 
 		// Listen for input
 		document.addEventListener("keydown", function (event) {
@@ -60,34 +61,58 @@ module.exports = class TetraEngine {
 			flashRate: engine.flashRate
 		});
 
-		// Start a new game with the gameplay view
-		titleView.onStartGame = function () {
-			var gameplayView = new GameplayView(viewClose, {
-				moveRate: engine.moveRate,
-				fallRate: engine.fallRate,
-				clearRate: engine.clearRate
-			});
+		// Continue to the main menu
+		titleView.onContinue = function () {
+			// Here's how to start a new game
+			function newGame(gameMode) {
+				var gameplayView = new GameplayView(viewClose, {
+					moveRate: engine.moveRate,
+					fallRate: engine.fallRate,
+					clearRate: engine.clearRate,
+					gameMode: gameMode
+				});
 
-			// When the game is over, show the game over view
-			gameplayView.onGameOver = function () {
-				var gameOverClose = function () {
-					engine.closeView(this);
+				// When the game is over, show the game over view
+				gameplayView.onGameOver = function () {
+					var gameOverClose = function () {
+						engine.closeView(this);
 
-					// When game over view is closed, return to title
-					gameplayView.close();
+						// When game over view is closed, return to title
+						gameplayView.close();
+					}
+					var gameOver = new GameOverView(gameOverClose);
+					engine.openView(gameOver);
+				};
+
+				// Display pause message
+				gameplayView.onPause = function () {
+					engine.openView(new PauseView(viewClose));
+				};
+
+				// Go to gameplay view
+				engine.openView(gameplayView);
+			}
+
+			// When the menu closes, choose the selected item
+			var menuClose = function () {
+				var selectedIndex = this.index;
+				engine.closeView(this);
+
+				switch (selectedIndex) {
+					case 0:
+						newGame(GameModes.STANDARD);
+						break;
+					case 1:
+						newGame(GameModes.ENDLESS);
+						break;
 				}
-				var gameOver = new GameOverView(gameOverClose);
-				engine.openView(gameOver);
 			};
 
-			// Display pause message
-			gameplayView.onPause = function () {
-				engine.openView(new PauseView(viewClose));
-			};
-
-			// Go to gameplay view
-			engine.openView(gameplayView);
+			// Show the menu
+			var menuView = new MenuView(menuClose, ["STANDARD", "ENDLESS MODE"]);
+			engine.openView(menuView);
 		}
+
 		// Go to title view
 		this.openView(titleView);
 	}
